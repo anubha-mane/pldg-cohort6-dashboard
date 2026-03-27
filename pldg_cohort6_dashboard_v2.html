@@ -1,0 +1,623 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>PLDG Cohort 6 &middot; Dev Guild Dashboard</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--pl:#0090FF;--plh:#0078D4;--pls:#EBF5FF;--blk:#0A0A0B;--g800:#1A1A2E;--g600:#44475A;--g400:#8892A4;--g200:#E2E8F0;--g100:#F7F9FC;--wh:#FFFFFF;--grn:#12B76A;--red:#F04438;--amb:#F79009;--pur:#7C3AED;--r:12px;--rs:8px;--sh:0 1px 3px rgba(0,0,0,.06),0 1px 2px rgba(0,0,0,.04);--shm:0 4px 8px rgba(0,0,0,.07),0 2px 4px rgba(0,0,0,.04);}
+*{box-sizing:border-box;margin:0;padding:0;}html{scroll-behavior:smooth;}
+body{font-family:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;background:var(--g100);color:var(--blk);font-size:14px;line-height:1.6;min-height:100vh;}
+
+/* TOPBAR */
+.topbar{background:var(--wh);border-bottom:1px solid var(--g200);position:sticky;top:0;z-index:200;box-shadow:var(--sh);}
+.tb-in{max-width:1280px;margin:0 auto;padding:0 24px;height:58px;display:flex;align-items:center;justify-content:space-between;}
+.brand{display:flex;align-items:center;gap:10px;text-decoration:none;}
+.brand-ic{width:30px;height:30px;background:var(--pl);border-radius:7px;display:flex;align-items:center;justify-content:center;}
+.brand-ic svg{width:17px;height:17px;fill:white;}
+.brand-nm{font-size:14px;font-weight:700;color:var(--blk);}
+.brand-sep{color:var(--g200);}
+.brand-sub{font-size:13px;font-weight:500;color:var(--g600);}
+.tb-r{display:flex;align-items:center;gap:8px;}
+.live-bg{display:flex;align-items:center;gap:6px;background:var(--g100);border:1px solid var(--g200);border-radius:20px;padding:4px 12px;font-size:12px;color:var(--g600);}
+.ldot{width:6px;height:6px;border-radius:50%;background:var(--grn);animation:bk 2s ease-in-out infinite;}
+@keyframes bk{0%,100%{opacity:1}50%{opacity:.3}}
+.rbtn{font-size:12px;font-weight:600;color:var(--pl);background:none;border:none;cursor:pointer;padding:4px 6px;font-family:inherit;border-radius:4px;transition:background .15s;}
+.rbtn:hover{background:var(--pls);}
+
+/* ALERT */
+.abanner{background:#FFFBEB;border-bottom:1px solid #FDE68A;padding:9px 24px;display:none;}
+.abanner.on{display:block;}
+.ain{max-width:1280px;margin:0 auto;display:flex;align-items:center;gap:10px;flex-wrap:wrap;font-size:13px;color:#92400E;}
+.ain strong{color:#78350F;}
+.alink{color:var(--pl);font-weight:600;text-decoration:underline;background:none;border:none;cursor:pointer;font-family:inherit;font-size:13px;padding:0;}
+
+/* HERO */
+.hero{background:var(--wh);border-bottom:1px solid var(--g200);padding:52px 24px 40px;}
+.hero-in{max-width:1280px;margin:0 auto;}
+.eyebrow{font-size:12px;font-weight:600;letter-spacing:1.2px;text-transform:uppercase;color:var(--pl);margin-bottom:12px;}
+.h1{font-size:36px;font-weight:800;line-height:1.12;color:var(--blk);max-width:680px;margin-bottom:14px;letter-spacing:-.5px;}
+.hdesc{font-size:15px;color:var(--g600);max-width:560px;margin-bottom:28px;line-height:1.65;}
+.hstats{display:flex;align-items:center;flex-wrap:wrap;gap:0;}
+.hstat{display:flex;align-items:center;gap:8px;padding:0 20px 0 0;margin:0 20px 0 0;border-right:1px solid var(--g200);font-size:13px;}
+.hstat:last-child{border-right:none;margin-right:0;padding-right:0;}
+.hstat strong{font-weight:700;color:var(--blk);font-size:22px;display:block;line-height:1.2;}
+.hstat span{color:var(--g400);font-size:12px;}
+
+/* TABS */
+.tabs-bar{background:var(--wh);border-bottom:1px solid var(--g200);position:sticky;top:58px;z-index:190;}
+.tabs-in{max-width:1280px;margin:0 auto;padding:0 24px;display:flex;overflow-x:auto;scrollbar-width:none;}
+.tabs-in::-webkit-scrollbar{display:none;}
+.tab{padding:14px 18px;font-size:13px;font-weight:500;color:var(--g400);border:none;background:none;cursor:pointer;border-bottom:2.5px solid transparent;white-space:nowrap;font-family:inherit;transition:color .15s,border-color .15s;}
+.tab:hover{color:var(--blk);}
+.tab.active{color:var(--pl);border-bottom-color:var(--pl);font-weight:600;}
+
+/* PAGE */
+.page{max-width:1280px;margin:0 auto;padding:32px 24px 72px;}
+.panel{display:none;}.panel.active{display:block;animation:fu .2s ease;}
+@keyframes fu{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
+
+/* KPI */
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:14px;margin-bottom:24px;}
+.kc{background:var(--wh);border:1px solid var(--g200);border-radius:var(--r);padding:18px 20px;box-shadow:var(--sh);border-top:3px solid var(--ka,var(--pl));transition:box-shadow .15s;}
+.kc:hover{box-shadow:var(--shm);}
+.kl{font-size:11px;font-weight:600;letter-spacing:.8px;text-transform:uppercase;color:var(--g400);margin-bottom:8px;}
+.kv{font-size:28px;font-weight:800;color:var(--ka,var(--pl));line-height:1.1;}
+.ks{font-size:11px;color:var(--g400);margin-top:4px;}
+
+/* SECTION HEAD */
+.sh{margin-bottom:18px;}.sh h2{font-size:17px;font-weight:700;color:var(--blk);}.sh p{font-size:13px;color:var(--g400);margin-top:3px;}
+
+/* GRIDS */
+.grid{display:grid;gap:16px;margin-bottom:16px;}
+.g2{grid-template-columns:1fr 1fr;}.g3{grid-template-columns:1fr 1fr 1fr;}.g21{grid-template-columns:2fr 1fr;}.g12{grid-template-columns:1fr 2fr;}
+@media(max-width:900px){.g2,.g3,.g21,.g12{grid-template-columns:1fr;}}
+
+/* CARD */
+.card{background:var(--wh);border:1px solid var(--g200);border-radius:var(--r);padding:20px;box-shadow:var(--sh);}
+.ct{font-size:11px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:var(--g400);margin-bottom:16px;display:flex;align-items:center;gap:7px;}
+.cd{width:7px;height:7px;border-radius:50%;background:var(--pl);flex-shrink:0;}
+.cw{position:relative;}.h220{height:220px;}.h260{height:260px;}.h300{height:300px;}.h180{height:180px;}
+
+/* TABLE */
+.dt{width:100%;border-collapse:collapse;font-size:13px;}
+.dt th{font-size:10px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:var(--g400);padding:8px 12px;text-align:left;border-bottom:1.5px solid var(--g200);}
+.dt td{padding:10px 12px;border-bottom:1px solid var(--g100);}
+.dt tr:last-child td{border-bottom:none;}.dt tr:hover td{background:var(--g100);}
+.tpl{display:flex;align-items:center;gap:8px;font-weight:600;}
+.tps{width:9px;height:9px;border-radius:2px;flex-shrink:0;}
+.nh{font-weight:700;color:var(--pl);}
+.mbw{background:var(--g100);border-radius:3px;height:5px;width:90px;overflow:hidden;}
+.mbf{height:100%;border-radius:3px;}
+
+/* BADGES */
+.badge{display:inline-flex;align-items:center;padding:2px 8px;border-radius:20px;font-size:10px;font-weight:600;}
+.bb{background:var(--pls);color:var(--pl);}.bp{background:#EDE9FE;color:#6D28D9;}.bg{background:#D1FAE5;color:#065F46;}.br{background:#FEE2E2;color:#991B1B;}
+
+/* LEADERBOARD */
+.lbs{max-height:520px;overflow-y:auto;padding-right:2px;}
+.lbs::-webkit-scrollbar{width:3px;}.lbs::-webkit-scrollbar-thumb{background:var(--g200);border-radius:2px;}
+.lbr{display:flex;align-items:center;gap:11px;padding:8px 10px;border-radius:var(--rs);margin-bottom:3px;transition:background .1s;}
+.lbr:hover{background:var(--g100);}
+.lbrk{width:24px;font-size:12px;font-weight:700;color:var(--g400);text-align:center;flex-shrink:0;}
+.lbrk.gd{color:#B45309;}.lbrk.sv{color:#6B7280;}.lbrk.bz{color:#92400E;}
+.lbav{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:white;flex-shrink:0;}
+.lbi{flex:1;min-width:0;}
+.lbn{font-size:13px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.lbm{font-size:11px;color:var(--g400);margin-top:1px;}
+.lbds{display:flex;gap:2px;flex-shrink:0;}
+.lbd{width:8px;height:8px;border-radius:2px;}
+.lbd.y{background:var(--grn);}.lbd.n{background:var(--g200);}
+.lbsc{font-size:12px;font-weight:800;color:var(--pl);width:32px;text-align:right;flex-shrink:0;}
+
+/* CHECKER */
+.chero{background:linear-gradient(135deg,#0090FF 0%,#0060CC 100%);border-radius:var(--r);padding:36px 32px 32px;color:white;margin-bottom:20px;}
+.chero h2{font-size:22px;font-weight:800;margin-bottom:8px;}
+.chero p{font-size:14px;opacity:.85;margin-bottom:24px;line-height:1.6;max-width:520px;}
+.cform{display:flex;gap:10px;max-width:500px;}
+.cinput{flex:1;padding:11px 16px;border:2px solid rgba(255,255,255,.35);background:rgba(255,255,255,.18);border-radius:var(--rs);color:white;font-size:14px;font-family:inherit;outline:none;transition:border-color .15s;}
+.cinput::placeholder{color:rgba(255,255,255,.55);}.cinput:focus{border-color:rgba(255,255,255,.85);}
+.cbtn{padding:11px 22px;background:white;color:var(--pl);border:none;border-radius:var(--rs);font-size:14px;font-weight:700;font-family:inherit;cursor:pointer;white-space:nowrap;transition:opacity .15s;}
+.cbtn:hover{opacity:.9;}
+
+/* RESULT CARD */
+.rcard{display:none;}.rcard.on{display:block;animation:fu .2s;}
+.chdr{display:flex;align-items:center;gap:14px;margin-bottom:20px;padding:16px;background:var(--g100);border-radius:var(--rs);}
+.cav{width:50px;height:50px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:800;color:white;flex-shrink:0;}
+.cnm{font-size:16px;font-weight:700;margin-bottom:3px;}
+.cmeta{font-size:12px;color:var(--g400);}
+
+.wg{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-bottom:16px;}
+@media(max-width:600px){.wg{grid-template-columns:repeat(2,1fr);}}
+.wt{border-radius:var(--rs);padding:11px 8px;text-align:center;border:1.5px solid var(--g200);transition:transform .1s;}
+.wt:hover{transform:translateY(-1px);}
+.wt.ok{background:#ECFDF5;border-color:#6EE7B7;}.wt.no{background:#FEF2F2;border-color:#FECACA;}
+.wtc{font-size:13px;font-weight:800;margin-bottom:2px;}
+.wt.ok .wtc{color:#065F46;}.wt.no .wtc{color:#991B1B;}
+.wtd{font-size:9px;color:var(--g400);line-height:1.4;margin-bottom:4px;}
+.wts{font-size:10px;font-weight:700;}
+.wt.ok .wts{color:#059669;}.wt.no .wts{color:#DC2626;}
+
+.rsum{display:flex;align-items:center;gap:20px;flex-wrap:wrap;background:var(--g100);border-radius:var(--rs);padding:11px 14px;font-size:12px;font-weight:600;margin-bottom:12px;}
+.rsi{display:flex;align-items:center;gap:6px;}.rsd{width:7px;height:7px;border-radius:50%;}
+.malert{background:#FFF1F2;border:1.5px solid #FECDD3;border-radius:var(--rs);padding:14px 16px;font-size:13px;color:#991B1B;}
+.malert strong{display:block;margin-bottom:4px;color:#7F1D1D;font-size:14px;}
+.mwks{font-family:monospace;font-weight:700;}
+.palert{background:#F0FDF4;border:1.5px solid #BBF7D0;border-radius:var(--rs);padding:14px 16px;font-size:13px;color:#166534;}
+.palert strong{font-size:15px;display:block;margin-bottom:3px;}
+.nf{background:var(--g100);border:1px solid var(--g200);border-radius:var(--rs);padding:20px;text-align:center;color:var(--g400);font-size:13px;margin-top:12px;}
+
+/* WEEK REF */
+.wrg{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px;}
+.wrt{background:var(--wh);border:1px solid var(--g200);border-radius:var(--rs);padding:12px 14px;}
+.wrtc{font-size:13px;font-weight:700;color:var(--pl);margin-bottom:2px;}
+.wrtd{font-size:11px;color:var(--g400);}
+.ibox{display:flex;gap:10px;background:var(--pls);border:1px solid #BAE6FD;border-radius:var(--rs);padding:12px 14px;font-size:12px;color:#075985;margin-top:14px;}
+
+/* DONUT */
+.dwrap{position:relative;display:flex;align-items:center;justify-content:center;}
+.dctr{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;pointer-events:none;}
+.dnum{font-size:22px;font-weight:800;color:var(--blk);}
+.dlbl{font-size:10px;font-weight:600;color:var(--g400);letter-spacing:.6px;text-transform:uppercase;}
+
+/* LEGEND */
+.leg{display:flex;gap:14px;flex-wrap:wrap;font-size:12px;margin-top:12px;}
+.lit{display:flex;align-items:center;gap:6px;}
+.lsw{width:9px;height:9px;border-radius:2px;flex-shrink:0;}
+
+/* FOOTER */
+footer{background:var(--wh);border-top:1px solid var(--g200);padding:18px 24px;font-size:12px;color:var(--g400);}
+.fin{max-width:1280px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:6px;}
+footer a{color:var(--pl);text-decoration:none;}
+.hint{font-size:11px;color:var(--g400);padding:10px 0;}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="tb-in">
+    <a class="brand" href="#">
+      <div class="brand-ic"><svg viewBox="0 0 17 17"><rect x="2" y="2" width="5.5" height="13" rx="1.2"/><rect x="9.5" y="2" width="5.5" height="8.5" rx="1.2"/></svg></div>
+      <span class="brand-nm">Protocol Labs</span>
+      <span class="brand-sep">&middot;</span>
+      <span class="brand-sub">PLDG Cohort 6</span>
+    </a>
+    <div class="tb-r">
+      <div class="live-bg"><div class="ldot"></div><span id="dlbl">Snapshot &middot; WES Data through Week 11 (Mar 27)</span></div>
+      <button class="rbtn" onclick="location.reload(true)">&#8635; Refresh</button>
+    </div>
+  </div>
+</div>
+
+<div class="abanner" id="abanner">
+  <div class="ain">
+    <span>&#9888;&#65039;</span>
+    <span id="atxt"><strong>You have missing WES submissions.</strong> Some program weeks are unrecorded.</span>
+    <button class="alink" onclick="jumpChecker()">&#8594; Check my submissions</button>
+  </div>
+</div>
+
+<div class="hero">
+  <div class="hero-in">
+    <div class="eyebrow">Protocol Labs Developer Guild &middot; Cohort 6</div>
+    <h1 class="h1">Dev Guild Engagement Dashboard</h1>
+    <p class="hdesc">Weekly survey analytics, tech partner contributions, NPS trends, and submission tracking for all contributors across the 10-week program.</p>
+    <div class="hstats">
+      <div class="hstat"><div><strong>77</strong><span>Contributors</span></div></div>
+      <div class="hstat"><div><strong>572</strong><span>Submissions</span></div></div>
+      <div class="hstat"><div><strong>1,473</strong><span>Issues / PRs</span></div></div>
+      <div class="hstat"><div><strong>9.08</strong><span>Avg NPS</span></div></div>
+      <div class="hstat"><div><strong>11</strong><span>Program Weeks</span></div></div>
+    </div>
+  </div>
+</div>
+
+<div class="tabs-bar">
+  <div class="tabs-in">
+    <button class="tab active" onclick="goTab('overview',this)">Overview</button>
+    <button class="tab" onclick="goTab('techpartners',this)">Tech Partners</button>
+    <button class="tab" onclick="goTab('nps',this)">NPS &amp; Sentiment</button>
+    <button class="tab" onclick="goTab('contributors',this)">Contributors</button>
+    <button class="tab" onclick="goTab('checker',this)">&#10003; Submission Checker</button>
+  </div>
+</div>
+
+<div class="page">
+
+  <div class="panel active" id="panel-overview">
+    <div class="kpis" id="kpi0"></div>
+    <div class="grid g2">
+      <div class="card"><div class="ct"><div class="cd"></div>Weekly Submissions &amp; Active Contributors</div><div class="cw h220"><canvas id="c-sub"></canvas></div></div>
+      <div class="card"><div class="ct"><div class="cd" style="background:var(--grn)"></div>Avg Hours Invested per Week</div><div class="cw h220"><canvas id="c-hrs"></canvas></div></div>
+    </div>
+    <div class="grid g2">
+      <div class="card"><div class="ct"><div class="cd" style="background:var(--amb)"></div>Issues / PRs Filed per Week</div><div class="cw h220"><canvas id="c-iss"></canvas></div></div>
+      <div class="card"><div class="ct"><div class="cd" style="background:var(--pur)"></div>Engagement Self-Evaluation</div><div class="cw h220"><canvas id="c-eng"></canvas></div></div>
+    </div>
+    <div class="grid g21">
+      <div class="card"><div class="ct"><div class="cd"></div>Engagement Events Attended &mdash; All Weeks</div><div class="cw h220"><canvas id="c-ev"></canvas></div></div>
+      <div class="card">
+        <div class="ct"><div class="cd" style="background:var(--pur)"></div>Contributor Mix by Track</div>
+        <div class="dwrap h180" style="justify-content:center;margin-bottom:4px;"><canvas id="c-tr" style="max-height:170px;max-width:170px;"></canvas><div class="dctr" id="trctr"></div></div>
+        <div class="leg" style="justify-content:center;" id="trleg"></div>
+      </div>
+    </div>
+    <p class="hint">&#128161; Data not refreshing? Hard refresh &mdash; <strong>Cmd+Shift+R</strong> (Mac) or <strong>Ctrl+Shift+R</strong> (Win)</p>
+  </div>
+
+  <div class="panel" id="panel-techpartners">
+    <div class="sh"><h2>Tech Partner Contributions</h2><p>Engagement and issues/PRs across all PLDG tech partner repos across all 10 program weeks.</p></div>
+    <div class="grid g21">
+      <div class="card"><div class="ct"><div class="cd"></div>Total Engagements by Tech Partner</div><div class="cw h260"><canvas id="c-tpb"></canvas></div></div>
+      <div class="card">
+        <div class="ct"><div class="cd" style="background:var(--pur)"></div>Contribution Share</div>
+        <div class="dwrap" style="height:220px;justify-content:center;"><canvas id="c-tpp" style="max-height:200px;max-width:200px;"></canvas></div>
+        <div class="leg" style="justify-content:center;" id="tpleg"></div>
+      </div>
+    </div>
+    <div class="card" style="margin-bottom:16px;"><div class="ct"><div class="cd" style="background:var(--amb)"></div>Weekly Engagement by Tech Partner (Top 5)</div><div class="cw h300"><canvas id="c-tpw"></canvas></div></div>
+    <div class="card"><div class="ct"><div class="cd"></div>Tech Partner Summary</div><div style="overflow-x:auto;"><table class="dt" id="tptbl"></table></div></div>
+  </div>
+
+  <div class="panel" id="panel-nps">
+    <div class="sh"><h2>NPS &amp; Program Sentiment</h2><p>How contributors rated the PLDG program over time, plus mentor program satisfaction.</p></div>
+    <div class="kpis" id="kpin"></div>
+    <div class="grid g21">
+      <div class="card"><div class="ct"><div class="cd" style="background:var(--grn)"></div>NPS Score Trend &mdash; Weekly</div><div class="cw h260"><canvas id="c-npt"></canvas></div></div>
+      <div class="card">
+        <div class="ct"><div class="cd" style="background:var(--pur)"></div>Overall NPS Breakdown</div>
+        <div class="dwrap" style="height:200px;justify-content:center;"><canvas id="c-npd" style="max-height:190px;max-width:190px;"></canvas><div class="dctr" id="ndctr"></div></div>
+        <div class="leg" style="justify-content:center;margin-top:10px;" id="ndleg"></div>
+      </div>
+    </div>
+    <div class="grid g2">
+      <div class="card"><div class="ct"><div class="cd"></div>Avg NPS Rating by Week (0&ndash;10)</div><div class="cw h220"><canvas id="c-npa"></canvas></div></div>
+      <div class="card"><div class="ct"><div class="cd" style="background:var(--amb)"></div>Mentor Program Ratings</div><div class="cw h220"><canvas id="c-men"></canvas></div></div>
+    </div>
+  </div>
+
+  <div class="panel" id="panel-contributors">
+    <div class="sh"><h2>Contributor Activity</h2><p>Active headcount, completion rates, and the full leaderboard sorted by total submissions.</p></div>
+    <div class="grid g2">
+      <div class="card"><div class="ct"><div class="cd"></div>Active Contributors per Week</div><div class="cw h220"><canvas id="c-act"></canvas></div></div>
+      <div class="card"><div class="ct"><div class="cd" style="background:var(--grn)"></div>Submission Completion Distribution</div><div class="cw h220"><canvas id="c-cmp"></canvas></div></div>
+    </div>
+    <div class="card"><div class="ct"><div class="cd" style="background:var(--amb)"></div>Leaderboard &mdash; Total Weeks Submitted</div><div class="lbs" id="lbc"></div></div>
+  </div>
+
+  <div class="panel" id="panel-checker">
+    <div class="chero">
+      <h2>Submission Checker</h2>
+      <p>Enter your email address or GitHub username to instantly see which weeks you filed your Weekly Engagement Survey &mdash; and which are still missing.</p>
+      <div class="cform">
+        <input class="cinput" id="cinput" type="text" placeholder="your@email.com  or  github_username" autocomplete="off"/>
+        <button class="cbtn" onclick="runChecker()">Check &#8594;</button>
+      </div>
+    </div>
+    <div class="rcard card" id="rcard"></div>
+    <div class="card" style="margin-top:16px;">
+      <div class="ct"><div class="cd"></div>Cohort 6 &mdash; Week Reference</div>
+      <div class="wrg" id="wrg"></div>
+      <div class="ibox"><span>&#8505;&#65039;</span><div>Data reflects WES submissions through <strong>Week 11 (Mar 22&ndash;27)</strong>. If you submitted recently, allow up to 24h for sync. Contact your program lead if you believe there is a discrepancy.</div></div>
+    </div>
+  </div>
+
+</div>
+
+<footer>
+  <div class="fin">
+    <span>Protocol Labs &middot; PLDG Cohort 6 &middot; Engagement Dashboard</span>
+    <span>Jan 11 &ndash; Mar 27, 2026 &nbsp;&middot;&nbsp; <a href="https://pldg.io" target="_blank">pldg.io</a></span>
+  </div>
+</footer>
+
+<script>
+/* ===== LIVE DATA CONFIG =====
+   Set AIRTABLE_ENDPOINT to your proxy URL when ready.
+   Leave null to use the bundled static snapshot.
+   See deployment guide in comments at bottom of file. */
+const AIRTABLE_ENDPOINT = null;
+
+const WEEKS=[
+  {key:'2026-W02 (Jan 11 \u2013 Jan 17)',code:'Week 1', label:'Jan 11\u201317'},
+  {key:'2026-W03 (Jan 18 \u2013 Jan 24)',code:'Week 2', label:'Jan 18\u201324'},
+  {key:'2026-W04 (Jan 25 \u2013 Jan 31)',code:'Week 3', label:'Jan 25\u201331'},
+  {key:'2026-W05 (Feb 01 \u2013 Feb 07)',code:'Week 4', label:'Feb 01\u201307'},
+  {key:'2026-W06 (Feb 08 \u2013 Feb 14)',code:'Week 5', label:'Feb 08\u201314'},
+  {key:'2026-W07 (Feb 15 \u2013 Feb 21)',code:'Week 6', label:'Feb 15\u201321'},
+  {key:'2026-W08 (Feb 22 \u2013 Feb 28)',code:'Week 7', label:'Feb 22\u201328'},
+  {key:'2026-W09 (Mar 01 \u2013 Mar 07)',code:'Week 8', label:'Mar 01\u201307'},
+  {key:'2026-W10 (Mar 08 \u2013 Mar 14)',code:'Week 9', label:'Mar 08\u201314'},
+  {key:'2026-W11 (Mar 15 \u2013 Mar 21)',code:'Week 10',label:'Mar 15\u201321'},
+  {key:'2026-W12 (Mar 22 \u2013 Mar 27)',code:'Week 11',label:'Mar 22\u201327'},
+];
+
+const WS=[
+  {w:'Wk 1', s:68,c:66,h:18.5,ti:124,na:8.50,ns:43, tp:{Libp2p:46,Storacha:48,'Fil-Oz':14,'Open Source Observer':5,Drand:2,IPFS:2}},
+  {w:'Wk 2', s:65,c:63,h:18.1,ti:132,na:8.54,ns:46, tp:{Libp2p:55,Storacha:50,'Fil-Oz':8,'Open Source Observer':4,'Fil-B':4,Drand:3}},
+  {w:'Wk 3', s:67,c:63,h:20.0,ti:153,na:8.72,ns:52, tp:{Libp2p:76,Storacha:48,'Fil-Oz':10,'Space Meridian':7,'Open Source Observer':5,Drand:3}},
+  {w:'Wk 4', s:64,c:64,h:20.9,ti:141,na:9.08,ns:66, tp:{Libp2p:61,Storacha:41,Akave:12,'Fil-Oz':8,'Space Meridian':6,'Open Source Observer':6}},
+  {w:'Wk 5', s:62,c:59,h:21.4,ti:163,na:8.94,ns:58, tp:{Libp2p:64,Storacha:52,Akave:21,'Fil-Oz':8,Lighthouse:6,Drand:3}},
+  {w:'Wk 6', s:59,c:58,h:21.5,ti:144,na:9.15,ns:69, tp:{Libp2p:65,Storacha:45,Akave:10,'Fil-Oz':8,Drand:6,'Space Meridian':4}},
+  {w:'Wk 7', s:55,c:54,h:22.2,ti:152,na:9.24,ns:71, tp:{Libp2p:75,Storacha:39,Akave:18,'Fil-Oz':7,'Open Source Observer':5,Drand:3}},
+  {w:'Wk 8', s:51,c:51,h:21.3,ti:136,na:9.67,ns:90, tp:{Libp2p:70,Storacha:32,Akave:13,'Fil-Oz':8,Drand:5,IPFS:2}},
+  {w:'Wk 9', s:45,c:45,h:20.7,ti:119,na:9.44,ns:82, tp:{Libp2p:59,Storacha:26,Akave:14,'Fil-Oz':10,Drand:6,IPFS:2}},
+  {w:'Wk 10',s:36,c:33,h:25.0,ti:109,na:9.58,ns:89, tp:{Libp2p:52,Storacha:25,Akave:21,Drand:8,'Fil-Oz':2,IPFS:1}},
+  {w:'Wk 11',s:0, c:0, h:0,   ti:0,  na:0,   ns:0,  tp:{}},
+];
+
+const TT={Libp2p:623,Storacha:406,Akave:115,'Fil-Oz':83,Drand:42,'Open Source Observer':33,'Space Meridian':27,IPFS:12,'Fil-B':12,Lighthouse:10,'Filecoin Foundation':4,'(other)':6};
+const TI={Libp2p:390,Storacha:255,Akave:92,'Fil-Oz':66,Drand:28,'Open Source Observer':22,'Space Meridian':18,IPFS:8,'Fil-B':8,Lighthouse:7,'Filecoin Foundation':2,'(other)':3};
+const TC={Libp2p:'#0090FF',Storacha:'#7C3AED',Akave:'#12B76A','Fil-Oz':'#F79009',Drand:'#EC4899','Open Source Observer':'#06B6D4','Space Meridian':'#F97316',IPFS:'#34D399','Fil-B':'#A78BFA',Lighthouse:'#FCD34D','Filecoin Foundation':'#6366F1','(other)':'#94A3B8'};
+
+const CONTRIBUTORS=[{"email":"godwinjdayo@gmail.com","name":"Godwin Jemegah","github":"n3-rd","type":"Track 2: Returning Contributor","weeks_submitted":["2026-W02 (Jan 11 \u2013 Jan 17)","2026-W03 (Jan 18 \u2013 Jan 24)","2026-W04 (Jan 25 \u2013 Jan 31)","2026-W05 (Feb 01 \u2013 Feb 07)","2026-W06 (Feb 08 \u2013 Feb 14)","2026-W09 (Mar 01 \u2013 Mar 07)","2026-W10 (Mar 08 \u2013 Mar 14)"]},{"email":"workbyanii@gmail.com","name":"Aniruddha Lahoti","github":"aniruddha1295","type":"Track 1: New Contributor","weeks_submitted":["2026-W02 (Jan 11 \u2013 Jan 17)","2026-W03 (Jan 18 \u2013 Jan 24)","2026-W04 (Jan 25 \u2013 Jan 31)","2026-W05 (Feb 01 \u2013 Feb 07)","2026-W06 (Feb 08 \u2013 Feb 14)","2026-W07 (Feb 15 \u2013 Feb 21)","2026-W08 (Feb 22 \u2013 Feb 28)"]},{"email":"similoluwaeyitayoabidoye@gmail.com","name":"Similoluwa Abidoye","github":"Abidoyesimze","type":"Track 1: New Contributor","weeks_submitted":["2026-W02 (Jan 11 \u2013 Jan 17)","2026-W03 (Jan 18 \u2013 Jan 24)","2026-W04 (Jan 25 \u2013 Jan 31)","2026-W05 (Feb 01 \u2013 Feb 07)"]},{"email":"harshsingh16d@gmail.com","name":"Harsh Singh","github":"HarshS1611","type":"Track 2: Returning Contributor","weeks_submitted":["2026-W02 (Jan 11 \u2013 Jan 17)","2026-W03 (Jan 18 \u2013 Jan 24)","2026-W04 (Jan 25 \u2013 Jan 31)","2026-W05 (Feb 01 \u2013 Feb 07)","2026-W06 (Feb 08 \u2013 Feb 14)","2026-W07 (Feb 15 \u2013 Feb 21)","2026-W08 (Feb 22 \u2013 Feb 28)","2026-W09 (Mar 01 \u2013 Mar 07)","2026-W11 (Mar 15 \u2013 Mar 21)","2026-W10 (Mar 08 \u2013 Mar 14)"]},{"email":"okwuosahpaschal@gmail.com","name":"Okwuosa Paschal","github":"Paschal533","type":"Track 2: Returning Contributor","weeks_submitted":["2026-W02 (Jan 11 \u2013 Jan 17)","2026-W03 (Jan 18 \u2013 Jan 24)","2026-W04 (Jan 25 \u2013 Jan 31)","2026-W05 (Feb 01 \u2013 Feb 07)","2026-W06 (Feb 08 \u2013 Feb 14)","2026-W07 (Feb 15 \u2013 Feb 21)","2026-W08 (Feb 22 \u2013 Feb 28)","2026-W09 (Mar 01 \u2013 Mar 07)","2026-W10 (Mar 08 \u2013 Mar 14)","2026-W11 (Mar 15 \u2013 Mar 21)"]},{"email":"charlesgodwill22@gamil.com","name":"Godwill Charles","github":"Goddhi","type":"Track 2: Returning Contributor","weeks_submitted":["2026-W02 (Jan 11 \u2013 Jan 17)"]},{"email":"nilavprajapati2004@gmail.com","name":"Nilav","github":"gerceboss","type":"Track 1: New Contributor","weeks_submitted":["2026-W02 (Jan 11 \u2013 Jan 17)","2026-W03 (Jan 18 \u2013 Jan 24)","2026-W04 (Jan 25 \u2013 Jan 31)","2026-W05 (Feb 01 \u2013 Feb 07)","2026-W06 (Feb 08 \u2013 Feb 14)","2026-W07 (Feb 15 \u2013 Feb 21)","2026-W08 (Feb 22 \u2013 Feb 28)","2026-W09 (Mar 01 \u2013 Mar 07)","2026-W11 (Mar 15 \u2013 Mar 21)"]},{"email":"jprsoni2014@gmail.com","name":"Parth Soni","github":"parth-soni07","type":"Track 2: Returning Contributor","weeks_submitted":["2026-W02 (Jan 11 \u2013 Jan 17)","2026-W03 (Jan 18 \u2013 Jan 24)","2026-W04 (Jan 25 \u2013 Jan 31)","2026-W05 (Feb 01 \u2013 Feb 07)","2026-W06 (Feb 08 \u2013 Feb 14)","2026-W07 (Feb 15 \u2013 Feb 21)","2026-W08 (Feb 22 \u2013 Feb 28)","2026-W09 (Mar 01 \u2013 Mar 07)","2026-W10 (Mar 08 \u2013 Mar 14)","2026-W11 (Mar 15 \u2013 Mar 21)"]},{"email":"aaryanjain888@gmail.com","name":"Aaryan Jain","github":"IronJam11","type":"Track 1: New Contributor","weeks_submitted":["2026-W02 (Jan 11 \u2013 Jan 17)","2026-W03 (Jan 18 \u2013 Jan 24)","2026-W04 (Jan 25 \u2013 Jan 31)","2026-W05 (Feb 01 \u2013 Feb 07)","2026-W06 (Feb 08 \u2013 Feb 14)","2026-W07 (Feb 15 \u2013 Feb 21)","2026-W08 (Feb 22 \u2013 Feb 28)","2026-W09 (Mar 01 \u2013 Mar 07)","2026-W10 (Mar 08 \u2013 Mar 14)","2026-W11 (Mar 15 \u2013 Mar 21)"]},{"email":"vlbhartiya@gmail.com","name":"Viraj Bhartiya","github":"virajbhartiya","type":"Track 2: Returning Contributor","weeks_submitted":["2026-W02 (Jan 11 \u2013 Jan 17)","2026-W03 (Jan 18 \u2013 Jan 24)"]},{"email":"p2005p5499p@gmail.com","name":"Prabal Patra","github":"alienx5499","type":"Track 2: Returning Contributor","weeks_submitted":["2026-W02 (Jan 11 \u2013 Jan 17)","2026-W03 (Jan 18 \u2013 Jan 24)","2026-W04 (Jan 25 \u2013 Jan 31)","2026-W05 (Feb 01 \u2013 Feb 07)","2026-W06 (Feb 08 \u2013 Feb 14)","2026-W07 (Feb 15 \u2013 Feb 21)","2026-W08 (Feb 22 \u2013 Feb 28)","2026-W09 (Mar 01 \u2013 Mar 07)","2026-W10 (Mar 08 \u2013 Mar 14)","2026-W11 (Mar 15 \u2013 Mar 21)"]},{"email":"723005jinesh@gmail.com","name":"Jinesh Jain","github":"Jineshbansal","type":"Track 1: New Contributor","weeks_submitted":["2026-W02 (Jan 11 \u2013 Jan 17)"]},{"email":"apoorva3569@gmail.com","name":"Apoorva Agrawal","github":"imApoorva36","type":"Track 1: New Contributor","weeks_submitted":["2026-W02 (Jan 11 \u2013 Jan 17)","2026-W03 (Jan 18 \u2013 Jan 24)","2026-W04 (Jan 25 \u2013 Jan 31)","2026-W05 (Feb 01 \u2013 Feb 07)","2026-W06 (Feb 08 \u2013 Feb 14)","2026-W07 (Feb 15 \u2013 Feb 21)","2026-W08 (Feb 22 \u2013 Feb 28)","2026-W09 (Mar 01 \u2013 Mar 07)","2026-W10 (Mar 08 \u2013 Mar 14)","2026-W11 (Mar 15 \u2013 Mar 21)"]},{"email":"xpanvictor@gmail.com","name":"Oladunjoye Victor Surprise","github":"xpanvictor","type":"Track 1: New Contributor","weeks_submitted":["2026-W02 (Jan 11 \u2013 Jan 17)","2026-W04 (Jan 25 \u2013 Jan 31)","2026-W05 (Feb 01 \u2013 Feb 07)","2026-W06 (Feb 08 \u2013 Feb 14)","2026-W07 (Feb 15 \u2013 Feb 21)","2026-W09 (Mar 01 \u2013 Mar 07)","2026-W10 (Mar 08 \u2013 Mar 14)"]},{"email":"asabya@gmail.com","name":"Sabyasachi Patra","github":"asabya","type":"Track 1: New Contributor","weeks_submitted":["2026-W02 (Jan 11 \u2013 Jan 17)","2026-W03 (Jan 18 \u2013 Jan 24)","2026-W04 (Jan 25 \u2013 Jan 31)","2026-W05 (Feb 01 \u2013 Feb 07)","2026-W06 (Feb 08 \u2013 Feb 14)","2026-W07 (Feb 15 \u2013 Feb 21)","2026-W08 (Feb 22 \u2013 Feb 28)","2026-W09 (Mar 01 \u2013 Mar 07)","2026-W10 (Mar 08 \u2013 Mar 14)"]},{"email":"yashksaini89@gmail.com","name":"Yash Saini","github":"yashksaini-coder","type":"Track 2: Returning Contributor","weeks_submitted":["2026-W02 (Jan 11 \u2013 Jan 17)","2026-W03 (Jan 18 \u2013 Jan 24)","2026-W04 (Jan 25 \u2013 Jan 31)","2026-W05 (Feb 01 \u2013 Feb 07)","2026-W06 (Feb 08 \u2013 Feb 14)","2026-W07 (Feb 15 \u2013 Feb 21)","2026-W08 (Feb 22 \u2013 Feb 28)","2026-W09 (Mar 01 \u2013 Mar 07)","2026-W10 (Mar 08 \u2013 Mar 14)","2026-W11 (Mar 15 \u2013 Mar 21)"]},{"email":"anuragshingare2005@gmail.com","name":"Anurag Shingare","github":"anuragShingare30","type":"Track 1: New Contributor","weeks_submitted":["2026-W02 (Jan 11 \u2013 Jan 17)","2026-W03 (Jan 18 \u2013 Jan 24)","2026-W04 (Jan 25 \u2013 Jan 31)","2026-W05 (Feb 01 \u2013 Feb 07)","2026-W06 (Feb 08 \u2013 Feb 14)","2026-W07 (Feb 15 \u2013 Feb 21)","2026-W08 (Feb 22 \u2013 Feb 28)","2026-W09 (Mar 01 \u2013 Mar 07)","2026-W11 (Mar 15 \u2013 Mar 21)","2026-W10 (Mar 08 \u2013 Mar 14)"]},{"email":"fyattani@gmail.com","name":"Fatuma Yattani","github":"Fatumayattani","type":"Track 2: Returning Contributor","weeks_submitted":["2026-W02 (Jan 11 \u2013 Jan 17)","2026-W03 (Jan 18 \u2013 Jan 24)","2026-W04 (Jan 25 \u2013 Jan 31)","2026-W05 (Feb 01 \u2013 Feb 07)","2026-W06 (Feb 08 \u2013 Feb 14)","2026-W07 (Feb 15 \u2013 Feb 21)","2026-W08 (Feb 22 \u2013 Feb 28)","2026-W09 (Mar 01 \u2013 Mar 07)","2026-W10 (Mar 08 \u2013 Mar 14)","2026-W11 (Mar 15 \u2013 Mar 21)"]},{"email":"belac335@gmail.com","name":"Caleb Olojo","github":"kaf-lamed-beyt","type":"Track 2: Returning Contributor","weeks_submitted":["2026-W02 (Jan 11 \u2013 Jan 17)","2026-W03 (Jan 18 \u2013 Jan 24)","2026-W04 (Jan 25 \u2013 Jan 31)","2026-W05 (Feb 01 \u2013 Feb 07)","2026-W06 (Feb 08 \u2013 Feb 14)","2026-W07 (Feb 15 \u2013 Feb 21)","2026-W08 (Feb 22 \u2013 Feb 28)","2026-W09 (Mar 01 \u2013 Mar 07)","2026-W10 (Mar 08 \u2013 Mar 14)","2026-W11 (Mar 15 \u2013 Mar 21)"]},{"email":"aashish.paliwal@research.iiit.ac.in","name":"Aashish Paliwal","github":"pali101","type":"Track 2: Returning Contributor","weeks_submitted":["2026-W02 (Jan 11 \u2013 Jan 17)","2026-W03 (Jan 18 \u2013 Jan 24)","2026-W04 (Jan 25 \u2013 Jan 31)","2026-W05 (Feb 01 \u2013 Feb 07)","2026-W06 (Feb 08 \u2013 Feb 14)","2026-W07 (Feb 15 \u2013 Feb 21)","2026-W08 (Feb 22 \u2013 Feb 28)","2026-W09 (Mar 01 \u2013 Mar 07)","2026-W10 (Mar 08 \u2013 Mar 14)","2026-W11 (Mar 15 \u2013 Mar 21)"]},{"email":"mail.aryan.jain07@gmail.com","name":"Aryan Jain","github":"gitsofaryan","type":"Track 1: New Contributor","weeks_submitted":["2026-W02 (Jan 11 \u2013 Jan 17)","2026-W03 (Jan 18 \u2013 Jan 24)","2026-W04 (Jan 25 \u2013 Jan 31)","2026-W05 (Feb 01 \u2013 Feb 07)","2026-W06 (Feb 08 \u2013 Feb 14)","2026-W07 (Feb 15 \u2013 Feb 21)","2026-W08 (Feb 22 \u2013 Feb 28)","2026-W09 (Mar 01 \u2013 Mar 07)","2026-W10 (Mar 08 \u2013 Mar 14)","2026-W11 (Mar 15 \u2013 Mar 21)"]},{"email":"nehakumarisde@gmail.com","name":"Neha Kumari","github":"Nkovaturient","type":"Track 2: Returning Contributor","weeks_submitted":["2026-W02 (Jan 11 \u2013 Jan 17)","2026-W03 (Jan 18 \u2013 Jan 24)","2026-W04 (Jan 25 \u2013 Jan 31)","2026-W05 (Feb 01 \u2013 Feb 07)","2026-W06 (Feb 08 \u2013 Feb 14)","2026-W07 (Feb 15 \u2013 Feb 21)","2026-W08 (Feb 22 \u2013 Feb 28)","2026-W09 (Mar 01 \u2013 Mar 07)","2026-W10 (Mar 08 \u2013 Mar 14)","2026-W11 (Mar 15 \u2013 Mar 21)"]},{"email":"aapsikhaira98@gmail.com","name":"Aapsi Khaira","github":"aapsi","type":"Track 1: New Contributor","weeks_submitted":["2026-W02 (Jan 11 \u2013 Jan 17)","2026-W03 (Jan 18 \u2013 Jan 24)","2026-W04 (Jan 25 \u2013 Jan 31)","2026-W05 (Feb 01 \u2013 Feb 07)","2026-W06 (Feb 08 \u2013 Feb 14)","2026-W07 (Feb 15 \u2013 Feb 21)","2026-W08 (Feb 22 \u2013 Feb 28)"]},{"email":"0xosepatrick@gmail.com","name":"Patrick Ose Ehimen","github":"Patrick-Ehimen","type":"Track 2: Returning Contributor","weeks_submitted":["2026-W02 (Jan 11 \u2013 Jan 17)","2026-W03 (Jan 18 \u2013 Jan 24)","2026-W04 (Jan 25 \u2013 Jan 31)","2026-W05 (Feb 01 \u2013 Feb 07)","2026-W06 (Feb 08 \u2013 Feb 14)","2026-W07 (Feb 15 \u2013 Feb 21)","2026-W08 (Feb 22 \u2013 Feb 28)","2026-W09 (Mar 01 \u2013 Mar 07)","2026-W10 (Mar 08 \u2013 Mar 14)"]},{"email":"talhaansariitr@gmail.com","name":"Talha Ansari","github":"amsorrytola","type":"Track 1: New Contributor","weeks_submitted":["2026-W02 (Jan 11 \u2013 Jan 17)","2026-W03 (Jan 18 \u2013 Jan 24)","2026-W04 (Jan 25 \u2013 Jan 31)","2026-W05 (Feb 01 \u2013 Feb 07)","2026-W06 (Feb 08 \u2013 Feb 14)","2026-W07 (Feb 15 \u2013 Feb 21)","2026-W08 (Feb 22 \u2013 Feb 28)","2026-W09 (Mar 01 \u2013 Mar 07)","2026-W10 (Mar 08 \u2013 Mar 14)","2026-W11 (Mar 15 \u2013 Mar 21)"]},{"email":"eliodcurry@gmail.com","name":"Eliod","github":"Muhangi2","type":"Track 1: New Contributor","weeks_submitted":["2026-W02 (Jan 11 \u2013 Jan 17)","2026-W05 (Feb 01 \u2013 Feb 07)","2026-W04 (Jan 25 \u2013 Jan 31)","2026-W03 (Jan 18 \u2013 Jan 24)"]},{"email":"abdullahazeem770@gmail.com","name":"Abdullah Azeem","github":"ABD-AZE","type":"Track 2: Returning Contributor","weeks_submitted":["2026-W02 (Jan 11 \u2013 Jan 17)","2026-W03 (Jan 18 \u2013 Jan 24)","2026-W04 (Jan 25 \u2013 Jan 31)","2026-W05 (Feb 01 \u2013 Feb 07)","2026-W06 (Feb 08 \u2013 Feb 14)","2026-W07 (Feb 15 \u2013 Feb 21)","2026-W08 (Feb 22 \u2013 Feb 28)"]},{"email":"raiasmit10@gmail.com","name":"Asmit Kumar Rai","github":"asmit27rai","type":"Track 2: Returning Contributor","weeks_submitted":["2026-W02 (Jan 11 \u2013 Jan 17)","2026-W03 (Jan 18 \u2013 Jan 24)","2026-W04 (Jan 25 \u2013 Jan 31)","2026-W05 (Feb 01 \u2013 Feb 07)","2026-W06 (Feb 08 \u2013 Feb 14)","2026-W07 (Feb 15 \u2013 Feb 21)","2026-W08 (Feb 22 \u2013 Feb 28)","2026-W09 (Mar 01 \u2013 Mar 07)","2026-W10 (Mar 08 \u2013 Mar 14)","2026-W11 (Mar 15 \u2013 Mar 21)"]},{"email":"siddharthaswarnkar@gmail.com","name":"Siddhartha Swarnkar","github":"bismuth01","type":"Track 2: Returning Contributor","weeks_submitted":["2026-W02 (Jan 11 \u2013 Jan 17)","2026-W03 (Jan 18 \u2013 Jan 24)","2026-W04 (Jan 25 \u2013 Jan 31)","2026-W05 (Feb 01 \u2013 Feb 07)","2026-W06 (Feb 08 \u2013 Feb 14)","2026-W07 (Feb 15 \u2013 Feb 21)","2026-W08 (Feb 22 \u2013 Feb 28)","2026-W09 (Mar 01 \u2013 Mar 07)","2026-W10 (Mar 08 \u2013 Mar 14)","2026-W11 (Mar 15 \u2013 Mar 21)"]},{"email":"smartdevs17@gmail.com","name":"Segun Stephen Joseph","github":"Smartdevs17","type":"Track 1: New Contributor","weeks_submitted":["2026-W02 (Jan 11 \u2013 Jan 17)","2026-W03 (Jan 18 \u2013 Jan 24)","2026-W04 (Jan 25 \u2013 Jan 31)","2026-W05 (Feb 01 \u2013 Feb 07)","2026-W06 (Feb 08 \u2013 Feb 14)","2026-W07 (Feb 15 \u2013 Feb 21)","2026-W08 (Feb 22 \u2013 Feb 28)","2026-W09 (Mar 01 \u2013 Mar 07)","2026-W10 (Mar 08 \u2013 Mar 14)","2026-W11 (Mar 15 \u2013 Mar 21)"]},{"email":"abhinavkarn369@gmail.com","name":"Abhinav Karn","github":"dr4g0n369","type":"Track 1: New Contributor","weeks_submitted":["2026-W02 (Jan 11 \u2013 Jan 17)","2026-W03 (Jan 18 \u2013 Jan 24)","2026-W05 (Feb 01 \u2013 Feb 07)","2026-W06 (Feb 08 \u2013 Feb 14)","2026-W07 (Feb 15 \u2013 Feb 21)","2026-W08 (Feb 22 \u2013 Feb 28)"]},{"email":"shashanktrivedi1917@gmail.com","name":"Shashank Trivedi","github":"lordshashank","type":"Track 2: Returning Contributor","weeks_submitted":["2026-W02 (Jan 11 \u2013 Jan 17)","2026-W03 (Jan 18 \u2013 Jan 24)","2026-W04 (Jan 25 \u2013 Jan 31)","2026-W05 (Feb 01 \u2013 Feb 07)","2026-W06 (Feb 08 \u2013 Feb 14)","2026-W07 (Feb 15 \u2013 Feb 21)","2026-W08 (Feb 22 \u2013 Feb 28)","2026-W09 (Mar 01 \u2013 Mar 07)","2026-W10 (Mar 08 \u2013 Mar 14)"]},{"email":"post@nicokrause.com","name":"Nico Krause","github":"NiKrause","type":"Track 2: Returning Contributor","weeks_submitted":["2026-W02 (Jan 11 \u2013 Jan 17)","2026-W03 (Jan 18 \u2013 Jan 24)","2026-W04 (Jan 25 \u2013 Jan 31)","2026-W05 (Feb 01 \u2013 Feb 07)","2026-W06 (Feb 08 \u2013 Feb 14)","2026-W07 (Feb 15 \u2013 Feb 21)","2026-W08 (Feb 22 \u2013 Feb 28)","2026-W09 (Mar 01 \u2013 Mar 07)","2026-W10 (Mar 08 \u2013 Mar 14)"]},{"email":"01chayandas@gmail.com","name":"Chayan Das","github":"ChayanDass","type":"Track 1: New Contributor","weeks_submitted":["2026-W02 (Jan 11 \u2013 Jan 17)","2026-W03 (Jan 18 \u2013 Jan 24)","2026-W04 (Jan 25 \u2013 Jan 31)","2026-W05 (Feb 01 \u2013 Feb 07)","2026-W06 (Feb 08 \u2013 Feb 14)","2026-W07 (Feb 15 \u2013 Feb 21)","2026-W08 (Feb 22 \u2013 Feb 28)","2026-W09 (Mar 01 \u2013 Mar 07)","2026-W10 (Mar 08 \u2013 Mar 14)","2026-W11 (Mar 15 \u2013 Mar 21)"]},{"email":"gautammanchandani0@gmail.com","name":"Gautam Manchandani","github":"GautamBytes","type":"Track 1: New Contributor","weeks_submitted":["2026-W02 (Jan 11 \u2013 Jan 17)","2026-W03 (Jan 18 \u2013 Jan 24)","2026-W04 (Jan 25 \u2013 Jan 31)","2026-W05 (Feb 01 \u2013 Feb 07)","2026-W06 (Feb 08 \u2013 Feb 14)","2026-W07 (Feb 15 \u2013 Feb 21)","2026-W08 (Feb 22 \u2013 Feb 28)","2026-W09 (Mar 01 \u2013 Mar 07)","2026-W10 (Mar 08 \u2013 Mar 14)"]},{"email":"amit08072005@gmail.com","name":"Amit Pandey","github":"d4v1d03","type":"Track 2: Returning Contributor","weeks_submitted":["2026-W02 (Jan 11 \u2013 Jan 17)","2026-W03 (Jan 18 \u2013 Jan 24)","2026-W04 (Jan 25 \u2013 Jan 31)","2026-W05 (Feb 01 \u2013 Feb 07)","2026-W06 (Feb 08 \u2013 Feb 14)","2026-W07 (Feb 15 \u2013 Feb 21)","2026-W08 (Feb 22 \u2013 Feb 28)","2026-W09 (Mar 01 \u2013 Mar 07)","2026-W10 (Mar 08 \u2013 Mar 14)","2026-W11 (Mar 15 \u2013 Mar 21)"]},{"email":"beanbigdev@pm.me","name":"Ken Yiu","github":"kenyiu","type":"Track 2: Returning Contributor","weeks_submitted":["2026-W02 (Jan 11 \u2013 Jan 17)","2026-W03 (Jan 18 \u2013 Jan 24)","2026-W04 (Jan 25 \u2013 Jan 31)","2026-W05 (Feb 01 \u2013 Feb 07)","2026-W06 (Feb 08 \u2013 Feb 14)","2026-W07 (Feb 15 \u2013 Feb 21)","2026-W08 (Feb 22 \u2013 Feb 28)","2026-W09 (Mar 01 \u2013 Mar 07)","2026-W10 (Mar 08 \u2013 Mar 14)"]},{"email":"gulshanweb3@gmail.com","name":"Gulshan Kumar Prasad","github":"gulshanpr","type":"Track 2: Returning Contributor","weeks_submitted":["2026-W02 (Jan 11 \u2013 Jan 17)","2026-W03 (Jan 18 \u2013 Jan 24)","2026-W04 (Jan 25 \u2013 Jan 31)","2026-W05 (Feb 01 \u2013 Feb 07)","2026-W09 (Mar 01 \u2013 Mar 07)","2026-W10 (Mar 08 \u2013 Mar 14)"]},{"email":"okolo.ebelelynda@gmail.con","name":"Ebele Lynda Okolo","github":"Lynndabel","type":"Track 1: New Contributor","weeks_submitted":["2026-W02 (Jan 11 \u2013 Jan 17)"]},{"email":"itszroth@gmail.com","name":"Collins Abegunde","github":"0-th","type":"Track 2: Returning Contributor","weeks_submitted":["2026-W02 (Jan 11 \u2013 Jan 17)","2026-W03 (Jan 18 \u2013 Jan 24)","2026-W04 (Jan 25 \u2013 Jan 31)","2026-W05 (Feb 01 \u2013 Feb 07)","2026-W06 (Feb 08 \u2013 Feb 14)","2026-W07 (Feb 15 \u2013 Feb 21)","2026-W08 (Feb 22 \u2013 Feb 28)"]},{"email":"alikhurshid.dev@gmail.com","name":"Md Khurshid Alam","github":"alikhere","type":"Track 2: Returning Contributor","weeks_submitted":["2026-W02 (Jan 11 \u2013 Jan 17)","2026-W03 (Jan 18 \u2013 Jan 24)","2026-W04 (Jan 25 \u2013 Jan 31)","2026-W05 (Feb 01 \u2013 Feb 07)","2026-W06 (Feb 08 \u2013 Feb 14)","2026-W07 (Feb 15 \u2013 Feb 21)","2026-W08 (Feb 22 \u2013 Feb 28)","2026-W09 (Mar 01 \u2013 Mar 07)","2026-W10 (Mar 08 \u2013 Mar 14)"]},{"email":"truthixify@gmail.com","name":"Truth","github":"truthixify","type":"Track 1: New Contributor","weeks_submitted":["2026-W02 (Jan 11 \u2013 Jan 17)","2026-W03 (Jan 18 \u2013 Jan 24)","2026-W04 (Jan 25 \u2013 Jan 31)","2026-W05 (Feb 01 \u2013 Feb 07)"]},{"email":"almnaemhany333@gmail.com","name":"Hany almnaem","github":"Hany-Almnaem","type":"Track 2: Returning Contributor","weeks_submitted":["2026-W02 (Jan 11 \u2013 Jan 17)","2026-W03 (Jan 18 \u2013 Jan 24)","2026-W04 (Jan 25 \u2013 Jan 31)","2026-W05 (Feb 01 \u2013 Feb 07)","2026-W06 (Feb 08 \u2013 Feb 14)","2026-W07 (Feb 15 \u2013 Feb 21)","2026-W08 (Feb 22 \u2013 Feb 28)","2026-W10 (Mar 08 \u2013 Mar 14)","2026-W09 (Mar 01 \u2013 Mar 07)","2026-W11 (Mar 15 \u2013 Mar 21)"]},{"email":"sambhavjain170944@gmail.com","name":"Sambhav Jain","github":"DarkLord017","type":"Track 2: Returning Contributor","weeks_submitted":["2026-W02 (Jan 11 \u2013 Jan 17)","2026-W03 (Jan 18 \u2013 Jan 24)","2026-W04 (Jan 25 \u2013 Jan 31)","2026-W05 (Feb 01 \u2013 Feb 07)","2026-W06 (Feb 08 \u2013 Feb 14)","2026-W07 (Feb 15 \u2013 Feb 21)","2026-W08 (Feb 22 \u2013 Feb 28)","2026-W09 (Mar 01 \u2013 Mar 07)","2026-W10 (Mar 08 \u2013 Mar 14)","2026-W11 (Mar 15 \u2013 Mar 21)"]},{"email":"aarav05mehta@gmail.com","name":"Aarav Mehta","github":"aaravm","type":"Track 2: Returning Contributor","weeks_submitted":["2026-W02 (Jan 11 \u2013 Jan 17)","2026-W03 (Jan 18 \u2013 Jan 24)","2026-W04 (Jan 25 \u2013 Jan 31)","2026-W05 (Feb 01 \u2013 Feb 07)","2026-W06 (Feb 08 \u2013 Feb 14)","2026-W07 (Feb 15 \u2013 Feb 21)","2026-W08 (Feb 22 \u2013 Feb 28)","2026-W09 (Mar 01 \u2013 Mar 07)","2026-W10 (Mar 08 \u2013 Mar 14)"]},{"email":"manu@seeta.in","name":"Manu Sheel Gupta","github":"seetadev","type":"Track 2: Returning Contributor","weeks_submitted":["2026-W02 (Jan 11 \u2013 Jan 17)","2026-W03 (Jan 18 \u2013 Jan 24)","2026-W04 (Jan 25 \u2013 Jan 31)","2026-W05 (Feb 01 \u2013 Feb 07)","2026-W06 (Feb 08 \u2013 Feb 14)","2026-W07 (Feb 15 \u2013 Feb 21)","2026-W08 (Feb 22 \u2013 Feb 28)","2026-W09 (Mar 01 \u2013 Mar 07)","2026-W10 (Mar 08 \u2013 Mar 14)","2026-W11 (Mar 15 \u2013 Mar 21)"]},{"email":"whitelovemohan123@gmail.com","name":"Mohan Kumar","github":"ItshMoh","type":"Track 1: New Contributor","weeks_submitted":["2026-W02 (Jan 11 \u2013 Jan 17)","2026-W03 (Jan 18 \u2013 Jan 24)","2026-W04 (Jan 25 \u2013 Jan 31)","2026-W05 (Feb 01 \u2013 Feb 07)","2026-W06 (Feb 08 \u2013 Feb 14)","2026-W07 (Feb 15 \u2013 Feb 21)","2026-W08 (Feb 22 \u2013 Feb 28)","2026-W09 (Mar 01 \u2013 Mar 07)","2026-W10 (Mar 08 \u2013 Mar 14)","2026-W11 (Mar 15 \u2013 Mar 21)"]},{"email":"mercybomanaps@gmail.com","name":"Mercy Boma Naps-Nkari","github":"bomanaps","type":"Track 2: Returning Contributor","weeks_submitted":["2026-W02 (Jan 11 \u2013 Jan 17)","2026-W03 (Jan 18 \u2013 Jan 24)","2026-W04 (Jan 25 \u2013 Jan 31)","2026-W05 (Feb 01 \u2013 Feb 07)","2026-W06 (Feb 08 \u2013 Feb 14)","2026-W07 (Feb 15 \u2013 Feb 21)","2026-W08 (Feb 22 \u2013 Feb 28)","2026-W09 (Mar 01 \u2013 Mar 07)"]},{"email":"omsantoshwar02@gmail.com","name":"Om Santoshwar","github":"omsant02","type":"Track 1: New Contributor","weeks_submitted":["2026-W02 (Jan 11 \u2013 Jan 17)","2026-W03 (Jan 18 \u2013 Jan 24)","2026-W04 (Jan 25 \u2013 Jan 31)","2026-W05 (Feb 01 \u2013 Feb 07)"]},{"email":"namayrohatgi@gmail.com","name":"Namay Rohatgi","github":"namay26","type":"Track 2: Returning Contributor","weeks_submitted":["2026-W02 (Jan 11 \u2013 Jan 17)"]},{"email":"31abhivanshj@gmail.com","name":"Abhivansh Saini","github":"akronim26","type":"Track 1: New Contributor","weeks_submitted":["2026-W02 (Jan 11 \u2013 Jan 17)","2026-W03 (Jan 18 \u2013 Jan 24)","2026-W04 (Jan 25 \u2013 Jan 31)","2026-W05 (Feb 01 \u2013 Feb 07)","2026-W06 (Feb 08 \u2013 Feb 14)","2026-W07 (Feb 15 \u2013 Feb 21)","2026-W08 (Feb 22 \u2013 Feb 28)","2026-W09 (Mar 01 \u2013 Mar 07)","2026-W10 (Mar 08 \u2013 Mar 14)","2026-W11 (Mar 15 \u2013 Mar 21)"]},{"email":"puspendramahariya@gmail.com","name":"Puspendra Mahariya","github":"silent-cipher","type":"Track 2: Returning Contributor","weeks_submitted":["2026-W02 (Jan 11 \u2013 Jan 17)","2026-W03 (Jan 18 \u2013 Jan 24)","2026-W05 (Feb 01 \u2013 Feb 07)","2026-W06 (Feb 08 \u2013 Feb 14)","2026-W04 (Jan 25 \u2013 Jan 31)","2026-W07 (Feb 15 \u2013 Feb 21)","2026-W08 (Feb 22 \u2013 Feb 28)","2026-W09 (Mar 01 \u2013 Mar 07)","2026-W10 (Mar 08 \u2013 Mar 14)"]},{"email":"abhinavagarwalla6@gmail.com","name":"Abhinav Agarwalla","github":"lla-dane","type":"Track 2: Returning Contributor","weeks_submitted":["2026-W02 (Jan 11 \u2013 Jan 17)","2026-W03 (Jan 18 \u2013 Jan 24)","2026-W04 (Jan 25 \u2013 Jan 31)","2026-W05 (Feb 01 \u2013 Feb 07)","2026-W06 (Feb 08 \u2013 Feb 14)","2026-W07 (Feb 15 \u2013 Feb 21)","2026-W08 (Feb 22 \u2013 Feb 28)","2026-W09 (Mar 01 \u2013 Mar 07)","2026-W10 (Mar 08 \u2013 Mar 14)","2026-W11 (Mar 15 \u2013 Mar 21)"]},{"email":"devanshgoel112233@gmail.com","name":"Devansh goel","github":"Devanshgoel-123","type":"Track 2: Returning Contributor","weeks_submitted":["2026-W02 (Jan 11 \u2013 Jan 17)","2026-W03 (Jan 18 \u2013 Jan 24)","2026-W05 (Feb 01 \u2013 Feb 07)","2026-W06 (Feb 08 \u2013 Feb 14)","2026-W07 (Feb 15 \u2013 Feb 21)","2026-W08 (Feb 22 \u2013 Feb 28)","2026-W10 (Mar 08 \u2013 Mar 14)"]},{"email":"732005jinesh@gmail.com","name":"Jinesh Jain","github":"Jineshbansal","type":"Track 1: New Contributor","weeks_submitted":["2026-W02 (Jan 11 \u2013 Jan 17)","2026-W03 (Jan 18 \u2013 Jan 24)","2026-W04 (Jan 25 \u2013 Jan 31)","2026-W05 (Feb 01 \u2013 Feb 07)","2026-W06 (Feb 08 \u2013 Feb 14)","2026-W07 (Feb 15 \u2013 Feb 21)","2026-W08 (Feb 22 \u2013 Feb 28)","2026-W09 (Mar 01 \u2013 Mar 07)","2026-W10 (Mar 08 \u2013 Mar 14)","2026-W11 (Mar 15 \u2013 Mar 21)"]},{"email":"pranavaggarwal1100@gmail.com","name":"Pranav Aggarwal","github":"Pranav-1100","type":"Track 1: New Contributor","weeks_submitted":["2026-W02 (Jan 11 \u2013 Jan 17)","2026-W03 (Jan 18 \u2013 Jan 24)","2026-W04 (Jan 25 \u2013 Jan 31)","2026-W05 (Feb 01 \u2013 Feb 07)","2026-W06 (Feb 08 \u2013 Feb 14)","2026-W07 (Feb 15 \u2013 Feb 21)"]},{"email":"d.vraj.4523@gmail.com","name":"Vraj Desai","github":"vking45","type":"Track 2: Returning Contributor","weeks_submitted":["2026-W03 (Jan 18 \u2013 Jan 24)","2026-W04 (Jan 25 \u2013 Jan 31)"]},{"email":"pranavkonde2020@gmail.com","name":"Pranav Konde","github":"pranavkonde","type":"Track 2: Returning Contributor","weeks_submitted":["2026-W02 (Jan 11 \u2013 Jan 17)","2026-W03 (Jan 18 \u2013 Jan 24)","2026-W04 (Jan 25 \u2013 Jan 31)","2026-W05 (Feb 01 \u2013 Feb 07)","2026-W06 (Feb 08 \u2013 Feb 14)","2026-W07 (Feb 15 \u2013 Feb 21)","2026-W08 (Feb 22 \u2013 Feb 28)","2026-W09 (Mar 01 \u2013 Mar 07)","2026-W10 (Mar 08 \u2013 Mar 14)","2026-W11 (Mar 15 \u2013 Mar 21)"]},{"email":"temiadev@gmail.com","name":"Temiloluwa Adelowo","github":"temi0x","type":"Track 2: Returning Contributor","weeks_submitted":["2026-W03 (Jan 18 \u2013 Jan 24)","2026-W04 (Jan 25 \u2013 Jan 31)","2026-W05 (Feb 01 \u2013 Feb 07)","2026-W06 (Feb 08 \u2013 Feb 14)"]},{"email":"sumanjeet0012@gmail.com","name":"Sumanjeet","github":"Sumanjeet0012","type":"Track 2: Returning Contributor","weeks_submitted":["2026-W02 (Jan 11 \u2013 Jan 17)","2026-W03 (Jan 18 \u2013 Jan 24)","2026-W04 (Jan 25 \u2013 Jan 31)","2026-W05 (Feb 01 \u2013 Feb 07)","2026-W06 (Feb 08 \u2013 Feb 14)","2026-W07 (Feb 15 \u2013 Feb 21)","2026-W08 (Feb 22 \u2013 Feb 28)","2026-W09 (Mar 01 \u2013 Mar 07)","2026-W10 (Mar 08 \u2013 Mar 14)","2026-W11 (Mar 15 \u2013 Mar 21)"]},{"email":"luca.pisani@birdo.net","name":"Luca Pisani","github":"acul71","type":"Track 2: Returning Contributor","weeks_submitted":["2026-W02 (Jan 11 \u2013 Jan 17)","2026-W03 (Jan 18 \u2013 Jan 24)","2026-W04 (Jan 25 \u2013 Jan 31)","2026-W05 (Feb 01 \u2013 Feb 07)","2026-W06 (Feb 08 \u2013 Feb 14)","2026-W07 (Feb 15 \u2013 Feb 21)","2026-W08 (Feb 22 \u2013 Feb 28)","2026-W09 (Mar 01 \u2013 Mar 07)","2026-W10 (Mar 08 \u2013 Mar 14)","2026-W11 (Mar 15 \u2013 Mar 21)"]},{"email":"luisawatkins15@gmail.com","name":"Luisa Watkins","github":"luisawatkins","type":"Track 2: Returning Contributor","weeks_submitted":["2026-W02 (Jan 11 \u2013 Jan 17)","2026-W03 (Jan 18 \u2013 Jan 24)","2026-W04 (Jan 25 \u2013 Jan 31)","2026-W05 (Feb 01 \u2013 Feb 07)","2026-W06 (Feb 08 \u2013 Feb 14)","2026-W07 (Feb 15 \u2013 Feb 21)","2026-W08 (Feb 22 \u2013 Feb 28)","2026-W09 (Mar 01 \u2013 Mar 07)"]},{"email":"crimson.zoren@gmail.com","name":"Soham Bhoir","github":"Winter-Soren","type":"Track 2: Returning Contributor","weeks_submitted":["2026-W02 (Jan 11 \u2013 Jan 17)","2026-W03 (Jan 18 \u2013 Jan 24)","2026-W04 (Jan 25 \u2013 Jan 31)","2026-W07 (Feb 15 \u2013 Feb 21)","2026-W05 (Feb 01 \u2013 Feb 07)","2026-W06 (Feb 08 \u2013 Feb 14)","2026-W08 (Feb 22 \u2013 Feb 28)","2026-W09 (Mar 01 \u2013 Mar 07)"]},{"email":"okolo.ebelelynda@gmail.com","name":"Ebele Lynda Okolo","github":"Lynndabel","type":"Track 1: New Contributor","weeks_submitted":["2026-W04 (Jan 25 \u2013 Jan 31)"]},{"email":"keerthivasansv2006@outlook.com","name":"Keerthivasan S V","github":"Keerthivasan-Venkitajalam","type":"Track 1: New Contributor","weeks_submitted":["2026-W04 (Jan 25 \u2013 Jan 31)","2026-W02 (Jan 11 \u2013 Jan 17)","2026-W05 (Feb 01 \u2013 Feb 07)","2026-W06 (Feb 08 \u2013 Feb 14)","2026-W07 (Feb 15 \u2013 Feb 21)","2026-W09 (Mar 01 \u2013 Mar 07)","2026-W10 (Mar 08 \u2013 Mar 14)"]},{"email":"chaitutatipamula023@gmail.com","name":"T Durga Chaitanya","github":"Chaitu-Tatipamula","type":"Track 2: Returning Contributor","weeks_submitted":["2026-W04 (Jan 25 \u2013 Jan 31)","2026-W03 (Jan 18 \u2013 Jan 24)","2026-W05 (Feb 01 \u2013 Feb 07)","2026-W02 (Jan 11 \u2013 Jan 17)","2026-W06 (Feb 08 \u2013 Feb 14)","2026-W07 (Feb 15 \u2013 Feb 21)","2026-W08 (Feb 22 \u2013 Feb 28)","2026-W09 (Mar 01 \u2013 Mar 07)","2026-W10 (Mar 08 \u2013 Mar 14)"]},{"email":"aditya311001rj@gmail.com","name":"Aditya Chaplot","github":"adielliot37","type":"Track 2: Returning Contributor","weeks_submitted":["2026-W02 (Jan 11 \u2013 Jan 17)","2026-W03 (Jan 18 \u2013 Jan 24)","2026-W04 (Jan 25 \u2013 Jan 31)","2026-W05 (Feb 01 \u2013 Feb 07)","2026-W06 (Feb 08 \u2013 Feb 14)","2026-W07 (Feb 15 \u2013 Feb 21)","2026-W08 (Feb 22 \u2013 Feb 28)","2026-W09 (Mar 01 \u2013 Mar 07)"]},{"email":"devanshgoel112233@gmail.coim","name":"Devansh goel","github":"Devanshgoel-123","type":"Track 2: Returning Contributor","weeks_submitted":["2026-W04 (Jan 25 \u2013 Jan 31)"]},{"email":"lihirwe6@gmail.com","name":"Leny Pascal IHIRWE","github":"leny62","type":"Track 2: Returning Contributor","weeks_submitted":["2026-W02 (Jan 11 \u2013 Jan 17)","2026-W03 (Jan 18 \u2013 Jan 24)","2026-W04 (Jan 25 \u2013 Jan 31)","2026-W05 (Feb 01 \u2013 Feb 07)","2026-W06 (Feb 08 \u2013 Feb 14)","2026-W09 (Mar 01 \u2013 Mar 07)","2026-W08 (Feb 22 \u2013 Feb 28)","2026-W07 (Feb 15 \u2013 Feb 21)"]},{"email":"charlesgodwill22@gmail.com","name":"Godwill Charles","github":"Goddhi","type":"Track 2: Returning Contributor","weeks_submitted":["2026-W03 (Jan 18 \u2013 Jan 24)","2026-W05 (Feb 01 \u2013 Feb 07)","2026-W06 (Feb 08 \u2013 Feb 14)","2026-W07 (Feb 15 \u2013 Feb 21)"]},{"email":"pranavdesai.psd@gmail.com","name":"Pranav Desai","github":"pranavvdesai","type":"Track 2: Returning Contributor","weeks_submitted":["2026-W05 (Feb 01 \u2013 Feb 07)","2026-W06 (Feb 08 \u2013 Feb 14)","2026-W07 (Feb 15 \u2013 Feb 21)","2026-W08 (Feb 22 \u2013 Feb 28)","2026-W09 (Mar 01 \u2013 Mar 07)","2026-W10 (Mar 08 \u2013 Mar 14)","2026-W11 (Mar 15 \u2013 Mar 21)"]},{"email":"lemniscite@gmail.com","name":"Hiro","github":"laciferin2024","type":"Track 1: New Contributor","weeks_submitted":["2026-W05 (Feb 01 \u2013 Feb 07)"]},{"email":"charlesgodwill22@gmamil.com","name":"Godwill Charles","github":"Goddhi","type":"Track 2: Returning Contributor","weeks_submitted":["2026-W07 (Feb 15 \u2013 Feb 21)"]},{"email":"laciferin@gmail.com","name":"Hiro","github":"laciferin2024","type":"Track 1: New Contributor","weeks_submitted":["2026-W06 (Feb 08 \u2013 Feb 14)","2026-W07 (Feb 15 \u2013 Feb 21)","2026-W08 (Feb 22 \u2013 Feb 28)","2026-W09 (Mar 01 \u2013 Mar 07)","2026-W11 (Mar 15 \u2013 Mar 21)"]},{"email":"keerthivasansv2006@outlook.co","name":"Keerthivasan S V","github":"Keerthivasan-Venkitajalam","type":"Track 1: New Contributor","weeks_submitted":["2026-W08 (Feb 22 \u2013 Feb 28)"]},{"email":"omoebun52@gmail.com","name":"Emmanuel Akanji","github":"manny-uncharted","type":"Track 2: Returning Contributor","weeks_submitted":["2026-W02 (Jan 11 \u2013 Jan 17)","2026-W03 (Jan 18 \u2013 Jan 24)","2026-W04 (Jan 25 \u2013 Jan 31)"]},{"email":"devanshgoel11223@gmail.com","name":"Devansh goel","github":"Devanshgoel-123","type":"Track 2: Returning Contributor","weeks_submitted":["2026-W11 (Mar 15 \u2013 Mar 21)"]}];
+
+/* CHART BASE */
+const BASE={responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{backgroundColor:'#1A1A2E',borderColor:'#E2E8F0',borderWidth:1,titleColor:'#F8FAFC',bodyColor:'#CBD5E1',titleFont:{family:'Inter',size:11,weight:'600'},bodyFont:{family:'Inter',size:12},padding:10,cornerRadius:7}},scales:{x:{grid:{color:'#F7F9FC'},ticks:{color:'#8892A4',font:{family:'Inter',size:10}}},y:{grid:{color:'#F7F9FC'},ticks:{color:'#8892A4',font:{family:'Inter',size:10}}}}};
+const cfg=o=>({...BASE,plugins:{...BASE.plugins,...(o.plugins||{})},scales:{...BASE.scales,...(o.scales||{})},...o});
+
+/* TABS */
+function goTab(id,btn){
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(b=>b.classList.remove('active'));
+  document.getElementById('panel-'+id).classList.add('active');
+  if(btn)btn.classList.add('active');
+}
+function jumpChecker(){
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(b=>b.classList.remove('active'));
+  document.getElementById('panel-checker').classList.add('active');
+  document.querySelectorAll('.tab')[4].classList.add('active');
+  document.getElementById('abanner').classList.remove('on');
+}
+
+/* LIVE DATA HOOK */
+async function tryLive(){
+  if(!AIRTABLE_ENDPOINT)return;
+  document.getElementById('dlbl').textContent='Loading live data...';
+  try{
+    const r=await fetch(AIRTABLE_ENDPOINT);
+    const d=await r.json();
+    document.getElementById('dlbl').textContent='Live · Airtable · Updated now';
+    console.log('Live data:',d);
+  }catch(e){
+    document.getElementById('dlbl').textContent='Snapshot · live data unavailable';
+  }
+}
+
+/* URL ?check= AUTO-LOOKUP */
+function checkParam(){
+  const p=new URLSearchParams(location.search).get('check');
+  if(!p)return;
+  document.getElementById('cinput').value=p;
+  runChecker();
+  goTab('checker',document.querySelectorAll('.tab')[4]);
+}
+
+window.addEventListener('DOMContentLoaded',()=>{
+  buildOverview();buildTP();buildNPS();buildContribs();buildChecker();
+  tryLive();checkParam();
+});
+
+/* OVERVIEW */
+function buildOverview(){
+  const wl=WS.map(w=>w.w);
+  const tot_i=WS.reduce((a,b)=>a+b.ti,0);
+  const perfect=CONTRIBUTORS.filter(c=>c.weeks_submitted.filter(w=>WEEKS.some(ww=>ww.key===w)).length===11).length;
+  const strip=document.getElementById('kpi0');
+  [{l:'Total Contributors',v:77,s:'29 New · 48 Returning',c:'#0090FF'},
+   {l:'Total Submissions',v:572,s:'10 program weeks',c:'#7C3AED'},
+   {l:'Issues / PRs',v:tot_i,s:'↑ avg grew each week',c:'#12B76A'},
+   {l:'Avg NPS Rating',v:'9.08/10',s:'Program-wide average',c:'#F79009'},
+   {l:'Avg Hours / Week',v:'21.0h',s:'Per contributor',c:'#EC4899'},
+   {l:'Perfect Attendance',v:perfect,s:'11/11 weeks submitted',c:'#0090FF'},
+  ].forEach(k=>{
+    const el=document.createElement('div');el.className='kc';el.style.setProperty('--ka',k.c);
+    el.innerHTML='<div class="kl">'+k.l+'</div><div class="kv">'+k.v+'</div><div class="ks">'+k.s+'</div>';
+    strip.appendChild(el);
+  });
+  new Chart(document.getElementById('c-sub'),{type:'bar',data:{labels:wl,datasets:[
+    {label:'Submissions',data:WS.map(w=>w.s),backgroundColor:'rgba(0,144,255,.75)',borderRadius:5,order:2},
+    {label:'Contributors',data:WS.map(w=>w.c),type:'line',borderColor:'#7C3AED',backgroundColor:'rgba(124,58,237,.08)',fill:true,tension:.4,pointBackgroundColor:'#7C3AED',pointRadius:4,borderWidth:2,order:1}
+  ]},options:cfg({plugins:{legend:{display:true,labels:{color:'#8892A4',font:{family:'Inter',size:11},boxWidth:10,padding:12}}}})});
+  new Chart(document.getElementById('c-hrs'),{type:'line',data:{labels:wl,datasets:[{data:WS.map(w=>w.h),borderColor:'#12B76A',backgroundColor:'rgba(18,183,106,.08)',fill:true,tension:.4,pointBackgroundColor:'#12B76A',pointRadius:4,borderWidth:2}]},options:cfg({})});
+  new Chart(document.getElementById('c-iss'),{type:'bar',data:{labels:wl,datasets:[{data:WS.map(w=>w.ti),backgroundColor:WS.map((_,i)=>'rgba(247,144,9,'+(0.4+i*0.06)+')'),borderRadius:5}]},options:cfg({})});
+  new Chart(document.getElementById('c-eng'),{type:'doughnut',data:{labels:['Very Highly Engaged (5)','Highly Engaged (4)','Engaged (3)','Minimal (2)','Low/None'],datasets:[{data:[333,133,74,22,10],backgroundColor:['#0090FF','#7C3AED','#12B76A','#F79009','#E2E8F0'],borderColor:'#fff',borderWidth:3}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:true,position:'right',labels:{color:'#8892A4',font:{family:'Inter',size:11},boxWidth:10,padding:8}},tooltip:BASE.plugins.tooltip}}});
+  const ev={'Weekly Standup':422,'Maintainers Call':334,'1:1 Meeting':226,'AMA Session':156,'Strategy Session':126,'Program Event':100,'Other':43,'None':32};
+  new Chart(document.getElementById('c-ev'),{type:'bar',data:{labels:Object.keys(ev),datasets:[{data:Object.values(ev),backgroundColor:['#0090FF','#7C3AED','#12B76A','#F79009','#EC4899','#06B6D4','#94A3B8','#E2E8F0'],borderRadius:5}]},options:cfg({indexAxis:'y',scales:{x:BASE.scales.x,y:{...BASE.scales.y,ticks:{color:'#44475A',font:{family:'Inter',size:11}}}}})});
+  new Chart(document.getElementById('c-tr'),{type:'doughnut',data:{labels:['Track 1: New','Track 2: Returning'],datasets:[{data:[29,48],backgroundColor:['#0090FF','#7C3AED'],borderColor:'#fff',borderWidth:3}]},options:{responsive:true,maintainAspectRatio:true,cutout:'68%',plugins:{legend:{display:false},tooltip:BASE.plugins.tooltip}}});
+  document.getElementById('trctr').innerHTML='<div class="dnum">77</div><div class="dlbl">total</div>';
+  document.getElementById('trleg').innerHTML=[['#0090FF','Track 1 · New (29)'],['#7C3AED','Track 2 · Returning (48)']].map(([c,l])=>'<div class="lit"><div class="lsw" style="background:'+c+';border-radius:50%"></div>'+l+'</div>').join('');
+}
+
+/* TECH PARTNERS */
+function buildTP(){
+  const nm=Object.keys(TT).sort((a,b)=>TT[b]-TT[a]);
+  const wl=WS.map(w=>w.w);
+  const tot=Object.values(TT).reduce((a,b)=>a+b,0);
+  const mxv=Math.max(...nm.map(n=>TT[n]));
+  new Chart(document.getElementById('c-tpb'),{type:'bar',data:{labels:nm,datasets:[{data:nm.map(n=>TT[n]),backgroundColor:nm.map(n=>(TC[n]||'#94A3B8')+'CC'),borderRadius:5}]},options:cfg({})});
+  const t6=nm.slice(0,6),rest=nm.slice(6).reduce((a,n)=>a+TT[n],0);
+  new Chart(document.getElementById('c-tpp'),{type:'doughnut',data:{labels:[...t6,'Others'],datasets:[{data:[...t6.map(n=>TT[n]),rest],backgroundColor:[...t6.map(n=>TC[n]||'#94A3B8'),'#E2E8F0'],borderColor:'#fff',borderWidth:3}]},options:{responsive:true,maintainAspectRatio:true,plugins:{legend:{display:false},tooltip:BASE.plugins.tooltip}}});
+  document.getElementById('tpleg').innerHTML=t6.map(n=>'<div class="lit"><div class="lsw" style="background:'+(TC[n]||'#94A3B8')+'"></div>'+n+'</div>').join('');
+  const t5=nm.slice(0,5);
+  new Chart(document.getElementById('c-tpw'),{type:'bar',data:{labels:wl,datasets:t5.map(tp=>({label:tp,data:WS.map(w=>w.tp[tp]||0),backgroundColor:(TC[tp]||'#94A3B8')+'CC',borderRadius:3}))},options:cfg({plugins:{legend:{display:true,labels:{color:'#8892A4',font:{family:'Inter',size:11},boxWidth:10,padding:10}}},scales:{x:{...BASE.scales.x,stacked:true},y:{...BASE.scales.y,stacked:true}}})});
+  const tbl=document.getElementById('tptbl');
+  tbl.innerHTML='<thead><tr><th>Tech Partner</th><th>Engagements</th><th>Issues/PRs</th><th>Share</th><th style="width:100px">Volume</th></tr></thead>';
+  const tb=document.createElement('tbody');
+  nm.forEach(n=>{
+    const c=TC[n]||'#94A3B8',pct=(TT[n]/tot*100).toFixed(1),bar=(TT[n]/mxv*100).toFixed(0);
+    const tr=document.createElement('tr');
+    tr.innerHTML='<td><div class="tpl"><div class="tps" style="background:'+c+'"></div>'+n+'</div></td><td><span class="nh">'+TT[n]+'</span></td><td>'+(TI[n]||0)+'</td><td><span style="font-size:12px;color:#8892A4">'+pct+'%</span></td><td><div class="mbw"><div class="mbf" style="width:'+bar+'%;background:'+c+'"></div></div></td>';
+    tb.appendChild(tr);
+  });
+  tbl.appendChild(tb);
+}
+
+/* NPS */
+function buildNPS(){
+  const wl=WS.map(w=>w.w);
+  const strip=document.getElementById('kpin');
+  [{l:'Week 10 NPS Score (Latest)',v:'89',s:'Up from 43 at Week 1',c:'#12B76A'},
+   {l:'Overall Avg Rating',v:'9.08/10',s:'All 11 weeks',c:'#0090FF'},
+   {l:'NPS Improvement',v:'+46 pts',s:'Wk 1 (43) → Wk 10 (89)',c:'#F79009'},
+   {l:'Promoters (9–10)',v:'78%',s:'Of 572 respondents',c:'#7C3AED'},
+  ].forEach(k=>{
+    const el=document.createElement('div');el.className='kc';el.style.setProperty('--ka',k.c);
+    el.innerHTML='<div class="kl">'+k.l+'</div><div class="kv">'+k.v+'</div><div class="ks">'+k.s+'</div>';
+    strip.appendChild(el);
+  });
+  new Chart(document.getElementById('c-npt'),{type:'line',data:{labels:wl,datasets:[
+    {label:'NPS Score',data:WS.map(w=>w.ns),borderColor:'#12B76A',backgroundColor:'rgba(18,183,106,.08)',fill:true,tension:.4,pointBackgroundColor:'#12B76A',pointRadius:5,borderWidth:2},
+    {label:'Zero',data:wl.map(()=>0),borderColor:'rgba(240,68,56,.25)',borderDash:[4,4],pointRadius:0,borderWidth:1}
+  ]},options:cfg({plugins:{legend:{display:true,labels:{color:'#8892A4',font:{family:'Inter',size:11},boxWidth:10}}}})});
+  new Chart(document.getElementById('c-npd'),{type:'doughnut',data:{labels:['Promoters (9–10)','Passives (7–8)','Detractors (≤6)'],datasets:[{data:[446,47,79],backgroundColor:['#12B76A','#F79009','#F04438'],borderColor:'#fff',borderWidth:4}]},options:{responsive:true,maintainAspectRatio:true,cutout:'70%',plugins:{legend:{display:false},tooltip:BASE.plugins.tooltip}}});
+  document.getElementById('ndctr').innerHTML='<div class="dnum">89</div><div class="dlbl">Wk 10 NPS</div>';
+  document.getElementById('ndleg').innerHTML=[['#12B76A','Promoters (446)'],['#F79009','Passives (47)'],['#F04438','Detractors (79)']].map(([c,l])=>'<div class="lit"><div class="lsw" style="background:'+c+';border-radius:50%"></div>'+l+'</div>').join('');
+  new Chart(document.getElementById('c-npa'),{type:'line',data:{labels:wl,datasets:[{data:WS.map(w=>w.na),borderColor:'#0090FF',backgroundColor:'rgba(0,144,255,.07)',fill:true,tension:.4,pointBackgroundColor:'#0090FF',pointRadius:4,borderWidth:2}]},options:cfg({scales:{x:BASE.scales.x,y:{...BASE.scales.y,min:7.5,max:10.2}}})});
+  const mr={'5–Excellent':185,'4–Very Good':67,'3–Good':54,'2–Fair':9,'1–Poor':1,'Did not participate':256};
+  new Chart(document.getElementById('c-men'),{type:'bar',data:{labels:Object.keys(mr),datasets:[{data:Object.values(mr),backgroundColor:['#12B76A','#34D399','#6EE7B7','#F79009','#F04438','#E2E8F0'],borderRadius:5}]},options:cfg({scales:{x:{...BASE.scales.x,ticks:{...BASE.scales.x.ticks,maxRotation:35,font:{family:'Inter',size:10}}},y:BASE.scales.y}})});
+}
+
+/* CONTRIBUTORS */
+function buildContribs(){
+  const wl=WS.map(w=>w.w);
+  new Chart(document.getElementById('c-act'),{type:'line',data:{labels:wl,datasets:[{data:WS.map(w=>w.c),borderColor:'#0090FF',backgroundColor:'rgba(0,144,255,.07)',fill:true,tension:.4,pointBackgroundColor:'#0090FF',pointRadius:5,borderWidth:2}]},options:cfg({})});
+  const bk={'1–2':0,'3–4':0,'5–6':0,'7–8':0,'9':0,'10 (All)':0};
+  CONTRIBUTORS.forEach(c=>{
+    const n=c.weeks_submitted.filter(w=>WEEKS.some(ww=>ww.key===w)).length;
+    if(n<=2)bk['1–2']++;else if(n<=4)bk['3–4']++;else if(n<=6)bk['5–6']++;else if(n<=8)bk['7–8']++;else if(n===9)bk['9']++;else bk['10 (All)']++;
+  });
+  new Chart(document.getElementById('c-cmp'),{type:'bar',data:{labels:Object.keys(bk),datasets:[{data:Object.values(bk),backgroundColor:['#F04438','#F97316','#F79009','#84CC16','#22D3EE','#12B76A'],borderRadius:6}]},options:cfg({})});
+  const lb=document.getElementById('lbc');
+  [...CONTRIBUTORS].sort((a,b)=>b.weeks_submitted.filter(w=>WEEKS.some(ww=>ww.key===w)).length-a.weeks_submitted.filter(w=>WEEKS.some(ww=>ww.key===w)).length).forEach((c,i)=>{
+    const n=c.weeks_submitted.filter(w=>WEEKS.some(ww=>ww.key===w)).length;
+    const rc=i===0?'gd':i===1?'sv':i===2?'bz':'';
+    const rl=i===0?'&#129351;':i===1?'&#129352;':i===2?'&#129353;':'#'+(i+1);
+    const isN=c.type.includes('Track 1');
+    const ini=c.name.split(' ').map(x=>x[0]).join('').substring(0,2).toUpperCase();
+    const dots=WEEKS.map(w=>'<div class="lbd '+(c.weeks_submitted.includes(w.key)?'y':'n')+'" title="'+w.label+'"></div>').join('');
+    const row=document.createElement('div');row.className='lbr';
+    row.innerHTML='<div class="lbrk '+rc+'">'+rl+'</div><div class="lbav" style="background:'+(isN?'#0090FF':'#7C3AED')+'">'+ini+'</div><div class="lbi"><div class="lbn">'+c.name+'</div><div class="lbm">@'+c.github+' &middot; <span class="badge '+(isN?'bb':'bp')+'" style="font-size:9px">'+(isN?'New':'Returning')+'</span></div></div><div class="lbds">'+dots+'</div><div class="lbsc">'+n+'/11</div>';
+    lb.appendChild(row);
+  });
+}
+
+/* CHECKER */
+function buildChecker(){
+  const g=document.getElementById('wrg');
+  WEEKS.forEach(w=>{const d=document.createElement('div');d.className='wrt';d.innerHTML='<div class="wrtc">'+w.code+'</div><div class="wrtd">'+w.label+'</div>';g.appendChild(d);});
+  document.getElementById('cinput').addEventListener('keydown',e=>{if(e.key==='Enter')runChecker();});
+}
+
+function runChecker(){
+  const q=document.getElementById('cinput').value.trim().toLowerCase();
+  const out=document.getElementById('rcard');
+  out.classList.remove('on');
+  if(!q)return;
+  const f=CONTRIBUTORS.find(c=>c.email.toLowerCase()===q||c.github.toLowerCase()===q||c.name.toLowerCase()===q);
+  out.classList.add('on');
+  if(!f){out.innerHTML='<div class="nf">No contributor found for "<strong>'+q+'</strong>".<br>Try your registered email address or GitHub username (case-insensitive).</div>';return;}
+  const sub=new Set(f.weeks_submitted.filter(w=>WEEKS.some(ww=>ww.key===w)));
+  const n=sub.size;
+  const miss=WEEKS.filter(w=>!sub.has(w.key));
+  const isN=f.type.includes('Track 1');
+  const ini=f.name.split(' ').map(x=>x[0]).join('').substring(0,2).toUpperCase();
+  const wh=WEEKS.map(w=>{const ok=sub.has(w.key);return '<div class="wt '+(ok?'ok':'no')+'"><div class="wtc">'+w.code+'</div><div class="wtd">'+w.label+'</div><div class="wts">'+(ok?'&#10003; Filed':'&#10007; Missing')+'</div></div>';}).join('');
+  const alert=miss.length===0
+    ?'<div class="palert"><strong>&#127919; Perfect attendance!</strong>You submitted every week of Cohort 6. Outstanding commitment.</div>'
+    :'<div class="malert"><strong>&#9888;&#65039; '+miss.length+' week'+(miss.length>1?'s':'')+' missing</strong><span class="mwks">'+miss.map(w=>w.code).join(' · ')+'</span><p style="margin-top:6px;color:#B91C1C;font-size:12px;">If the program is still active, please submit your WES for the missing weeks immediately. Missing submissions may affect your completion status and program record.</p></div>';
+  out.innerHTML='<div class="chdr"><div class="cav" style="background:'+(isN?'#0090FF':'#7C3AED')+'">'+ini+'</div><div><div class="cnm">'+f.name+' <span class="badge '+(isN?'bb':'bp')+'" style="margin-left:8px">'+(isN?'Track 1 · New':'Track 2 · Returning')+'</span></div><div class="cmeta">@'+f.github+'  ·  '+f.email+'</div></div></div><div class="wg">'+wh+'</div><div class="rsum"><div class="rsi"><div class="rsd" style="background:#12B76A"></div>'+n+'/10 weeks submitted ('+(n/10*100).toFixed(0)+'%)</div>'+(miss.length>0?'<div class="rsi"><div class="rsd" style="background:#F04438"></div>'+miss.length+' missing</div>':'')+'</div>'+alert;
+}
+
+/*
+  ====================================================================
+  DEPLOYMENT GUIDE
+  ====================================================================
+
+  STEP 1 - DEPLOY TO GITHUB PAGES
+  --------------------------------
+  1. Go to github.com/new - create a new PUBLIC repo
+     e.g. "pldg-cohort6-dashboard"
+  2. Upload this file as: index.html
+  3. Settings -> Pages -> Source: main / (root) -> Save
+  4. Live in ~30 sec at:
+     https://YOUR_USERNAME.github.io/pldg-cohort6-dashboard/
+
+  STEP 2 - CONNECT LIVE AIRTABLE DATA
+  -------------------------------------
+  GitHub Pages can only serve static files - secrets must live in
+  a lightweight backend proxy. Two free options:
+
+  OPTION A: Cloudflare Workers (recommended)
+    - workers.cloudflare.com -> Create Worker
+    - Worker code:
+        export default {
+          async fetch(request, env) {
+            const BASE = 'YOUR_AIRTABLE_BASE_ID';
+            const TABLE = 'WES%20Master';
+            const url = 'https://api.airtable.com/v0/'+BASE+'/'+TABLE+'?pageSize=100';
+            const res = await fetch(url, {
+              headers: { Authorization: 'Bearer ' + env.AT_KEY }
+            });
+            const data = await res.json();
+            return new Response(JSON.stringify(data), {
+              headers: {
+                'Content-Type': 'application/json',
+                'Access-Control-Allow-Origin': '*'
+              }
+            });
+          }
+        };
+    - Settings -> Variables -> Secret: AT_KEY = your Airtable API key
+    - Deploy -> copy Worker URL
+    - In this file: const AIRTABLE_ENDPOINT = 'https://xxx.workers.dev/';
+
+  OPTION B: Vercel Edge Function (also free)
+    - Create /api/wes.js:
+        export default async (req, res) => {
+          const r = await fetch(
+            'https://api.airtable.com/v0/'+process.env.BASE+'/WES',
+            { headers:{Authorization:'Bearer '+process.env.KEY} }
+          );
+          res.setHeader('Access-Control-Allow-Origin','*');
+          res.json(await r.json());
+        };
+    - Add env vars BASE and KEY in Vercel dashboard
+    - const AIRTABLE_ENDPOINT = 'https://your-app.vercel.app/api/wes';
+
+  STEP 3 - HOW CONTRIBUTORS KNOW THEY HAVEN'T SUBMITTED
+  -------------------------------------------------------
+  Three mechanisms are built into this dashboard:
+
+  1. SUBMISSION CHECKER TAB
+     Contributors type their email or GitHub username.
+     They get an instant green/red week grid, and a bold
+     red alert listing every missing week code (W05, W09, etc.)
+     with clear instructions to submit immediately.
+
+  2. PERSONALISED LINK (URL ?check= parameter)
+     Send each contributor a personalized link:
+       https://yoursite.github.io/pldg-dashboard/?check=their@email.com
+     The dashboard auto-runs their check on page load.
+     You can generate these links from Airtable and include
+     them in your weekly Discord/Slack digest.
+
+  3. AIRTABLE AUTOMATION (weekly reminder emails)
+     In Airtable Automations:
+     - Trigger: "Scheduled - Every Monday at 9am IST"
+     - Find Records: contributor email NOT in current week's WES
+     - Action: Send email with:
+         Subject: "PLDG WES Reminder - Week X not submitted"
+         Body: "Hey [name], your WES for Week X is missing.
+               Submit here: [form link]
+               Check your status: [dashboard]/?check=[email]"
+
+  ====================================================================
+*/
+</script>
+</body>
+</html>
