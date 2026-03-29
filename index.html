@@ -457,83 +457,115 @@ let TT = {};
 let TI = {};
 let CONTRIBUTORS = [];
  
-/* hashEmail — mirrors the worker's hash so checker lookup works
-   without the dashboard ever receiving or storing raw emails */
+/* hashEmail — lets contributors look up by email in the checker
+   without the raw email being stored anywhere in the browser state */
 function hashEmail(email) {
   const s = email.toLowerCase().trim();
   let h = 0;
   for (let i = 0; i < s.length; i++) {
     h = (Math.imul(31, h) + s.charCodeAt(i)) | 0;
   }
-  return Math.abs(h).toString(36);
+  const n = Math.abs(h);
+  if (n === 0) return '0';
+  const chars = '0123456789abcdefghijklmnopqrstuvwxyz';
+  let out = '', tmp = n;
+  while (tmp > 0) { out = chars[tmp % 36] + out; tmp = Math.floor(tmp / 36); }
+  return out;
 }
  
 function processRecords(records) {
-  // Worker already stripped sensitive fields — records are sanitized objects
-  // Filter to canonical single-week entries only
-  const rows = records.filter(r => CANONICAL_WEEKS.includes(r.week));
+  // records = raw Airtable [{id, fields:{...}}, ...]
+  const rows = records
+    .map(r => r.fields || r)   // handle both {fields:{}} and flat objects
+    .filter(f => {
+      const w = f['Program Week'] || f.week || '';
+      return CANONICAL_WEEKS.includes(w);
+    });
+ 
+  // normalise field access — works whether worker sends r.fields or flat
+  const g = (row, fullKey, shortKey) =>
+    row[fullKey] !== undefined ? row[fullKey] : (row[shortKey] !== undefined ? row[shortKey] : null);
  
   // ── WEEK SUMMARY ──────────────────────────────
   const ws = WEEKS.map(wk => {
-    const weekRows = rows.filter(r => r.week === wk.key);
-    const npsNums = weekRows.map(r => parseFloat(r.nps)).filter(n => !isNaN(n));
+    const weekRows = rows.filter(r => {
+      const w = r['Program Week'] || r.week || '';
+      return w === wk.key;
+    });
+ 
+    const npsNums = weekRows
+      .map(r => parseFloat(g(r,'How likely are you to recommend the PLDG to others?','nps')))
+      .filter(n => !isNaN(n));
     const promoters  = npsNums.filter(n => n >= 9).length;
     const detractors = npsNums.filter(n => n < 7).length;
-    const npsScore = npsNums.length ? Math.round((promoters - detractors) / npsNums.length * 100) : 0;
-    const npsAvg   = npsNums.length ? Math.round(npsNums.reduce((a,b)=>a+b,0) / npsNums.length * 100) / 100 : 0;
-    const hours    = weekRows.map(r => parseFloat(r.hours)).filter(n => !isNaN(n));
-    const hoursAvg = hours.length ? Math.round(hours.reduce((a,b)=>a+b,0) / hours.length * 10) / 10 : 0;
-    const issues   = weekRows.map(r => parseFloat(r.issues)).filter(n => !isNaN(n));
+    const npsScore   = npsNums.length ? Math.round((promoters-detractors)/npsNums.length*100) : 0;
+    const npsAvg     = npsNums.length ? Math.round(npsNums.reduce((a,b)=>a+b,0)/npsNums.length*100)/100 : 0;
+ 
+    const hours = weekRows
+      .map(r => parseFloat(g(r,'How many hours did you spend this week on PLDG-related work?','hours')))
+      .filter(n => !isNaN(n));
+    const hoursAvg = hours.length ? Math.round(hours.reduce((a,b)=>a+b,0)/hours.length*10)/10 : 0;
+ 
+    const issues = weekRows
+      .map(r => parseFloat(g(r,'How many issues, PRs, or projects this week?','issues')))
+      .filter(n => !isNaN(n));
     const issuesTotal = Math.round(issues.reduce((a,b)=>a+b,0));
-    // Unique contributors by emailHash (no raw email needed)
-    const uniqueContribs = new Set(weekRows.map(r => r.emailHash)).size;
+ 
+    const emailField = r => (r['Email Address'] || r.emailHash || '').toString().toLowerCase().trim();
+    const uniqueContribs = new Set(weekRows.map(emailField)).size;
  
     const tp = {};
     weekRows.forEach(r => {
-      ['tp1','tp2','tp3','tp4','tp5','tp6','tp7'].forEach(k => {
-        const t = r[k];
+      for (let i = 1; i <= 7; i++) {
+        const t = r['TechPartner '+i] || r['tp'+i] || '';
         if (t && t.trim()) { const name = t.trim(); tp[name] = (tp[name]||0)+1; }
-      });
+      }
     });
  
     return { w: wk.code, s: weekRows.length, c: uniqueContribs, h: hoursAvg, ti: issuesTotal, na: npsAvg, ns: npsScore, tp };
   });
  
   // ── CONTRIBUTOR GRID ──────────────────────────
-  // Keyed by emailHash — raw email never stored in browser
   const contribMap = {};
   rows.forEach(r => {
-    const key = r.emailHash;
+    const rawEmail = (r['Email Address'] || '').toLowerCase().trim();
+    const key = rawEmail ? hashEmail(rawEmail) : (r.emailHash || '');
     if (!key) return;
     if (!contribMap[key]) {
       contribMap[key] = {
         emailHash: key,
-        name:   (r.name   || '').trim(),
-        github: (r.github || '').trim(),
-        type:   r.type || '',
+        name:   (r['Contributor Name']  || r.name   || '').trim(),
+        github: (r['Github Username']   || r.github || '').trim(),
+        type:    r['Contributor Type']  || r.type   || '',
         weeks_submitted: []
       };
     }
-    if (!contribMap[key].weeks_submitted.includes(r.week)) {
-      contribMap[key].weeks_submitted.push(r.week);
+    const wk = r['Program Week'] || r.week || '';
+    if (!contribMap[key].weeks_submitted.includes(wk)) {
+      contribMap[key].weeks_submitted.push(wk);
     }
   });
   const contributors = Object.values(contribMap);
  
   // ── TP TOTALS ─────────────────────────────────
-  const ttCounts = {};
+  const ttCounts = {}, tiCounts = {};
   rows.forEach(r => {
-    ['tp1','tp2','tp3','tp4','tp5','tp6','tp7'].forEach(k => {
-      const t = r[k];
-      if (t && t.trim()) { const name = t.trim(); ttCounts[name] = (ttCounts[name]||0)+1; }
-    });
+    for (let i = 1; i <= 7; i++) {
+      const tp    = r['TechPartner '+i] || r['tp'+i] || '';
+      const title = r['Issue Title '+i] || '';
+      if (tp && tp.trim()) {
+        const name = tp.trim();
+        ttCounts[name] = (ttCounts[name]||0)+1;
+        if (title && title.trim()) tiCounts[name] = (tiCounts[name]||0)+1;
+      }
+    }
   });
-  // For the summary table, use tp counts as issue proxy (worker stripped issue titles)
-  const tiCounts = { ...ttCounts };
  
   // ── NPS OVERALL ───────────────────────────────
-  const allNps = rows.map(r => parseFloat(r.nps)).filter(n => !isNaN(n));
-  const overallNpsAvg  = allNps.length ? Math.round(allNps.reduce((a,b)=>a+b,0)/allNps.length*100)/100 : 0;
+  const allNps = rows
+    .map(r => parseFloat(g(r,'How likely are you to recommend the PLDG to others?','nps')))
+    .filter(n => !isNaN(n));
+  const overallNpsAvg = allNps.length ? Math.round(allNps.reduce((a,b)=>a+b,0)/allNps.length*100)/100 : 0;
   const promoters  = allNps.filter(n => n >= 9).length;
   const passives   = allNps.filter(n => n >= 7 && n < 9).length;
   const detractors = allNps.filter(n => n < 7).length;
@@ -541,18 +573,18 @@ function processRecords(records) {
   // ── ENGAGEMENT DIST ───────────────────────────
   const engDist = {5:0,4:0,3:0,2:0,1:0,0:0};
   rows.forEach(r => {
-    const e = r.engagement;
-    if (e && e[0] && !isNaN(parseInt(e[0]))) {
-      const score = parseInt(e[0]);
-      if (score in engDist) engDist[score]++;
+    const e = r['Engagement Self-Evaluation'] || r.engagement || '';
+    if (e && !isNaN(parseInt(e[0]))) {
+      const s = parseInt(e[0]);
+      if (s in engDist) engDist[s]++;
     }
   });
  
   // ── MENTOR DIST ───────────────────────────────
   const mentorDist = {'5':0,'4':0,'3':0,'2':0,'1':0,'0':0};
   rows.forEach(r => {
-    const m = r.mentor;
-    if (m && m[0] && !isNaN(parseInt(m[0]))) {
+    const m = r['Mentor Program'] || r.mentor || '';
+    if (m && !isNaN(parseInt(m[0]))) {
       const s = parseInt(m[0]).toString();
       if (s in mentorDist) mentorDist[s]++;
     }
@@ -567,7 +599,9 @@ function processRecords(records) {
   const totalIssues = ws.reduce((a,b) => a+b.ti, 0);
   const activewks   = ws.filter(w => w.h > 0);
   const avgHours    = activewks.length ? Math.round(activewks.reduce((a,b)=>a+b.h,0)/activewks.length*10)/10 : 0;
-  const perfect     = contributors.filter(c => c.weeks_submitted.filter(w => CANONICAL_WEEKS.includes(w)).length === 11).length;
+  const perfect     = contributors.filter(c =>
+    c.weeks_submitted.filter(w => CANONICAL_WEEKS.includes(w)).length === 11
+  ).length;
  
   return { ws, contributors, ttCounts, tiCounts, overallNpsAvg, promoters, passives, detractors, engDist, mentorDist, track1, track2, totalSubs, totalIssues, avgHours, perfect, totalContribs: contributors.length };
 }
@@ -822,8 +856,9 @@ function runChecker(){
   const f=CONTRIBUTORS.find(c=>
     (c.emailHash && c.emailHash===qHash) ||
     (c.github && c.github.toLowerCase()===q) ||
-    (c.github && c.github.toLowerCase()==='@'+q) ||
-    (c.name && c.name.toLowerCase()===q)
+    (c.github && ('@'+c.github.toLowerCase())===q) ||
+    (c.name && c.name.toLowerCase()===q) ||
+    (c.name && c.name.toLowerCase().startsWith(q))
   );
   out.classList.add('on');
   if(!f){out.innerHTML='<div class="nf">No contributor found for "<strong>'+q+'</strong>".<br>Try your registered email address or GitHub username (case-insensitive).</div>';return;}
