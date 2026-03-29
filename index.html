@@ -475,11 +475,13 @@ function hashEmail(email) {
  
 function processRecords(records) {
   // records = raw Airtable [{id, fields:{...}}, ...]
+  // No week filter needed — Airtable view already scoped to Cohort 6
+  // Skip rows where Program Week selects multiple weeks (comma in value)
   const rows = records
-    .map(r => r.fields || r)   // handle both {fields:{}} and flat objects
+    .map(r => r.fields || r)
     .filter(f => {
       const w = f['Program Week'] || f.week || '';
-      return CANONICAL_WEEKS.includes(w);
+      return w.length > 0 && !w.includes(',');
     });
  
   // normalise field access — works whether worker sends r.fields or flat
@@ -488,9 +490,11 @@ function processRecords(records) {
  
   // ── WEEK SUMMARY ──────────────────────────────
   const ws = WEEKS.map(wk => {
+    // normalise dashes so U+2013 en-dash and literal – both match
+    const norm = s => s.replace(/\u2013|\u2014|–|—/g, '-').trim();
     const weekRows = rows.filter(r => {
       const w = r['Program Week'] || r.week || '';
-      return w === wk.key;
+      return norm(w) === norm(wk.key);
     });
  
     const npsNums = weekRows
@@ -599,9 +603,13 @@ function processRecords(records) {
   const totalIssues = ws.reduce((a,b) => a+b.ti, 0);
   const activewks   = ws.filter(w => w.h > 0);
   const avgHours    = activewks.length ? Math.round(activewks.reduce((a,b)=>a+b.h,0)/activewks.length*10)/10 : 0;
-  const perfect     = contributors.filter(c =>
-    c.weeks_submitted.filter(w => CANONICAL_WEEKS.includes(w)).length === 11
-  ).length;
+  // Count unique canonical weeks submitted per contributor
+  const norm2 = s => s.replace(/\u2013|\u2014|–|—/g, '-').trim();
+  const normKeys = WEEKS.map(wk => norm2(wk.key));
+  const perfect = contributors.filter(c => {
+    const submitted = new Set(c.weeks_submitted.map(norm2));
+    return normKeys.filter(k => submitted.has(k)).length === WEEKS.length;
+  }).length;
  
   return { ws, contributors, ttCounts, tiCounts, overallNpsAvg, promoters, passives, detractors, engDist, mentorDist, track1, track2, totalSubs, totalIssues, avgHours, perfect, totalContribs: contributors.length };
 }
@@ -864,7 +872,8 @@ function runChecker(){
   if(!f){out.innerHTML='<div class="nf">No contributor found for "<strong>'+q+'</strong>".<br>Try your registered email address or GitHub username (case-insensitive).</div>';return;}
   const sub=new Set(f.weeks_submitted.filter(w=>WEEKS.some(ww=>ww.key===w)));
   const n=sub.size;
-  const miss=WEEKS.filter(w=>!sub.has(w.key));
+  const normW = s => s.replace(/\u2013|\u2014|–|—/g,'-').trim();
+  const miss=WEEKS.filter(w=>![...sub].some(s=>normW(s)===normW(w.key)));
   const isN=f.type.includes('Track 1');
   const ini=f.name.split(' ').map(x=>x[0]).join('').substring(0,2).toUpperCase();
   const wh=WEEKS.map(w=>{const ok=sub.has(w.key);return '<div class="wt '+(ok?'ok':'no')+'"><div class="wtc">'+w.code+'</div><div class="wtd">'+w.label+'</div><div class="wts">'+(ok?'&#10003; Filed':'&#10007; Missing')+'</div></div>';}).join('');
