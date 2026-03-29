@@ -1,6 +1,6 @@
 # PL Dev Guild · Cohort 6 Engagement Dashboard
 
-A live engagement analytics dashboard for the [Protocol Labs Developer Guild](https://pldg.io) Cohort 6 program (January – March 2026).
+A live engagement analytics dashboard for the [Protocol Labs Developer Guild](https://pldg.xyz) Cohort 6 program (January – March 2026).
 
 **Live dashboard:** [anubha-mane.github.io/pldg-cohort6-dashboard](https://anubha-mane.github.io/pldg-cohort6-dashboard/)
 
