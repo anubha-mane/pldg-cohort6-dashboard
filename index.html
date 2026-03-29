@@ -900,11 +900,14 @@ function runChecker(){
   const normW = s => s.replace(/\u2013|\u2014|–|—/g, '-').trim();
   const normKeys = new Map(WEEKS.map(wk => [normW(wk.key), wk.key]));
   // Build submitted set using normalised keys
+  console.log('[PLDG Checker] weeks_submitted raw:', JSON.stringify(f.weeks_submitted));
   const submittedNorm = new Set(
     f.weeks_submitted
       .filter(w => w && w.startsWith('2026-W'))
       .map(normW)
   );
+  console.log('[PLDG Checker] submittedNorm:', [...submittedNorm]);
+  console.log('[PLDG Checker] WEEKS keys normalised:', WEEKS.map(w => normW(w.key)));
   const n = submittedNorm.size;
   const miss = WEEKS.filter(wk => !submittedNorm.has(normW(wk.key)));
   // sub used for display — check via normalised comparison
