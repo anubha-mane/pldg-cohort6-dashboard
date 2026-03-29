@@ -584,10 +584,16 @@ async function tryLive() {
       method: 'GET',
       mode: 'cors',
       credentials: 'omit',
-      headers: { 'Content-Type': 'application/json' }
     });
     const d = await r.json();
-    if (!d.records || !d.records.length) throw new Error('No records');
+ 
+    // Worker returned an Airtable error — surface it clearly
+    if (!r.ok || d.error) {
+      const msg = d.error ? JSON.stringify(d.error) : 'HTTP ' + r.status;
+      throw new Error('Worker/Airtable error: ' + msg);
+    }
+    if (!d.records || !d.records.length) throw new Error('Empty records array returned');
+ 
     const processed = processRecords(d.records);
     document.getElementById('dlbl').textContent = 'Live · Airtable · ' + d.total + ' records · Updated ' + new Date().toLocaleTimeString();
     buildAll(processed);
