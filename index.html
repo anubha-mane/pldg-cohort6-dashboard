@@ -580,15 +580,22 @@ async function tryLive() {
   }
   document.getElementById('dlbl').textContent = 'Loading live data…';
   try {
-    const r = await fetch(AIRTABLE_ENDPOINT);
+    const r = await fetch(AIRTABLE_ENDPOINT, {
+      method: 'GET',
+      mode: 'cors',
+      credentials: 'omit',
+      headers: { 'Content-Type': 'application/json' }
+    });
     const d = await r.json();
     if (!d.records || !d.records.length) throw new Error('No records');
     const processed = processRecords(d.records);
     document.getElementById('dlbl').textContent = 'Live · Airtable · ' + d.total + ' records · Updated ' + new Date().toLocaleTimeString();
     buildAll(processed);
   } catch(e) {
-    console.warn('Live data failed, using snapshot:', e);
-    document.getElementById('dlbl').textContent = 'Snapshot · live data unavailable';
+    console.error('Live data failed:', e.name, e.message, e);
+    // Show specific error type to help debug
+    const errMsg = e.message || e.name || 'Unknown error';
+    document.getElementById('dlbl').textContent = 'Live data unavailable: ' + errMsg;
     buildAll(null);
   }
 }
@@ -623,6 +630,16 @@ function buildAll(live) {
     Object.assign(TT, live.ttCounts);
     Object.keys(TI).forEach(k => delete TI[k]);
     Object.assign(TI, live.tiCounts);
+  } else {
+    // No live data and no static fallback — show error state in UI
+    document.querySelectorAll('.kc').forEach(el => el.remove());
+    const strip = document.getElementById('kpi0');
+    if (strip) {
+      strip.innerHTML = '<div style="grid-column:1/-1;padding:20px;text-align:center;color:#F04438;font-size:13px;">' +
+        '&#9888; Could not connect to Airtable. Check that your Cloudflare Worker is deployed and the CORS origin matches <strong>https://anubha-mane.github.io</strong>.' +
+        '</div>';
+    }
+    return; // Don't try to build charts with no data
   }
   // Update checker status
   const cs = document.getElementById('checker-status');
