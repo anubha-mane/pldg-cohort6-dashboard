@@ -616,34 +616,39 @@ function processRecords(records) {
  
 async function tryLive() {
   if (!AIRTABLE_ENDPOINT) {
-    // Static snapshot — build from bundled data
     buildAll(null);
     return;
   }
-  document.getElementById('dlbl').textContent = 'Loading live data…';
-  try {
-    const r = await fetch(AIRTABLE_ENDPOINT, {
-      method: 'GET',
-      mode: 'cors',
-      credentials: 'omit',
-    });
-    const d = await r.json();
  
-    // Worker returned an Airtable error — surface it clearly
-    if (!r.ok || d.error) {
-      const msg = d.error ? JSON.stringify(d.error) : 'HTTP ' + r.status;
-      throw new Error('Worker/Airtable error: ' + msg);
+  const lbl = document.getElementById('dlbl');
+  lbl.textContent = 'Loading live data…';
+ 
+  try {
+    console.log('[PLDG] Fetching:', AIRTABLE_ENDPOINT);
+    const r = await fetch(AIRTABLE_ENDPOINT);
+    console.log('[PLDG] Response status:', r.status, r.ok);
+    console.log('[PLDG] Response headers:', [...r.headers.entries()]);
+ 
+    if (!r.ok) {
+      throw new Error('HTTP ' + r.status + ' ' + r.statusText);
     }
-    if (!d.records || !d.records.length) throw new Error('Empty records array returned');
+ 
+    const d = await r.json();
+    console.log('[PLDG] Records received:', d.total, 'first record keys:', d.records && d.records[0] ? Object.keys(d.records[0]) : 'none');
+    console.log('[PLDG] First record sample:', d.records && d.records[0] ? JSON.stringify(d.records[0]).substring(0, 300) : 'none');
+ 
+    if (d.error) throw new Error('Airtable error: ' + JSON.stringify(d.error));
+    if (!d.records || !d.records.length) throw new Error('Empty records');
  
     const processed = processRecords(d.records);
-    document.getElementById('dlbl').textContent = 'Live · Airtable · ' + d.total + ' records · Updated ' + new Date().toLocaleTimeString();
+    console.log('[PLDG] Processed:', processed.totalContribs, 'contributors,', processed.totalSubs, 'submissions');
+ 
+    lbl.textContent = 'Live · Airtable · ' + d.total + ' records · ' + new Date().toLocaleTimeString();
     buildAll(processed);
+ 
   } catch(e) {
-    console.error('Live data failed:', e.name, e.message, e);
-    // Show specific error type to help debug
-    const errMsg = e.message || e.name || 'Unknown error';
-    document.getElementById('dlbl').textContent = 'Live data unavailable: ' + errMsg;
+    console.error('[PLDG] FAILED:', e.name, '|', e.message);
+    lbl.textContent = 'Error: ' + e.message;
     buildAll(null);
   }
 }
