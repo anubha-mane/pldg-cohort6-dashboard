@@ -11,7 +11,7 @@
 :root{--pl:#0090FF;--plh:#0078D4;--pls:#EBF5FF;--blk:#0A0A0B;--g800:#1A1A2E;--g600:#44475A;--g400:#8892A4;--g200:#E2E8F0;--g100:#F7F9FC;--wh:#FFFFFF;--grn:#12B76A;--red:#F04438;--amb:#F79009;--pur:#7C3AED;--r:12px;--rs:8px;--sh:0 1px 3px rgba(0,0,0,.06),0 1px 2px rgba(0,0,0,.04);--shm:0 4px 8px rgba(0,0,0,.07),0 2px 4px rgba(0,0,0,.04);}
 *{box-sizing:border-box;margin:0;padding:0;}html{scroll-behavior:smooth;}
 body{font-family:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;background:var(--g100);color:var(--blk);font-size:14px;line-height:1.6;min-height:100vh;}
- 
+
 /* TOPBAR */
 .topbar{background:var(--wh);border-bottom:1px solid var(--g200);position:sticky;top:0;z-index:200;box-shadow:var(--sh);}
 .tb-in{max-width:1280px;margin:0 auto;padding:0 24px;height:58px;display:flex;align-items:center;justify-content:space-between;}
@@ -27,14 +27,14 @@ body{font-family:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;background:
 @keyframes bk{0%,100%{opacity:1}50%{opacity:.3}}
 .rbtn{font-size:12px;font-weight:600;color:var(--pl);background:none;border:none;cursor:pointer;padding:4px 6px;font-family:inherit;border-radius:4px;transition:background .15s;}
 .rbtn:hover{background:var(--pls);}
- 
+
 /* ALERT */
 .abanner{background:#FFFBEB;border-bottom:1px solid #FDE68A;padding:9px 24px;display:none;}
 .abanner.on{display:block;}
 .ain{max-width:1280px;margin:0 auto;display:flex;align-items:center;gap:10px;flex-wrap:wrap;font-size:13px;color:#92400E;}
 .ain strong{color:#78350F;}
 .alink{color:var(--pl);font-weight:600;text-decoration:underline;background:none;border:none;cursor:pointer;font-family:inherit;font-size:13px;padding:0;}
- 
+
 /* HERO */
 .hero{background:var(--wh);border-bottom:1px solid var(--g200);padding:52px 24px 40px;}
 .hero-in{max-width:1280px;margin:0 auto;}
@@ -46,7 +46,7 @@ body{font-family:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;background:
 .hstat:last-child{border-right:none;margin-right:0;padding-right:0;}
 .hstat strong{font-weight:700;color:var(--blk);font-size:22px;display:block;line-height:1.2;}
 .hstat span{color:var(--g400);font-size:12px;}
- 
+
 /* TABS */
 .tabs-bar{background:var(--wh);border-bottom:1px solid var(--g200);position:sticky;top:58px;z-index:190;}
 .tabs-in{max-width:1280px;margin:0 auto;padding:0 24px;display:flex;overflow-x:auto;scrollbar-width:none;}
@@ -54,12 +54,12 @@ body{font-family:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;background:
 .tab{padding:14px 18px;font-size:13px;font-weight:500;color:var(--g400);border:none;background:none;cursor:pointer;border-bottom:2.5px solid transparent;white-space:nowrap;font-family:inherit;transition:color .15s,border-color .15s;}
 .tab:hover{color:var(--blk);}
 .tab.active{color:var(--pl);border-bottom-color:var(--pl);font-weight:600;}
- 
+
 /* PAGE */
 .page{max-width:1280px;margin:0 auto;padding:32px 24px 72px;}
 .panel{display:none;}.panel.active{display:block;animation:fu .2s ease;}
 @keyframes fu{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
- 
+
 /* KPI */
 .kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:14px;margin-bottom:24px;}
 .kc{background:var(--wh);border:1px solid var(--g200);border-radius:var(--r);padding:18px 20px;box-shadow:var(--sh);border-top:3px solid var(--ka,var(--pl));transition:box-shadow .15s;}
@@ -67,21 +67,21 @@ body{font-family:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;background:
 .kl{font-size:11px;font-weight:600;letter-spacing:.8px;text-transform:uppercase;color:var(--g400);margin-bottom:8px;}
 .kv{font-size:28px;font-weight:800;color:var(--ka,var(--pl));line-height:1.1;}
 .ks{font-size:11px;color:var(--g400);margin-top:4px;}
- 
+
 /* SECTION HEAD */
 .sh{margin-bottom:18px;}.sh h2{font-size:17px;font-weight:700;color:var(--blk);}.sh p{font-size:13px;color:var(--g400);margin-top:3px;}
- 
+
 /* GRIDS */
 .grid{display:grid;gap:16px;margin-bottom:16px;}
 .g2{grid-template-columns:1fr 1fr;}.g3{grid-template-columns:1fr 1fr 1fr;}.g21{grid-template-columns:2fr 1fr;}.g12{grid-template-columns:1fr 2fr;}
 @media(max-width:900px){.g2,.g3,.g21,.g12{grid-template-columns:1fr;}}
- 
+
 /* CARD */
 .card{background:var(--wh);border:1px solid var(--g200);border-radius:var(--r);padding:20px;box-shadow:var(--sh);}
 .ct{font-size:11px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:var(--g400);margin-bottom:16px;display:flex;align-items:center;gap:7px;}
 .cd{width:7px;height:7px;border-radius:50%;background:var(--pl);flex-shrink:0;}
 .cw{position:relative;}.h220{height:220px;}.h260{height:260px;}.h300{height:300px;}.h180{height:180px;}
- 
+
 /* TABLE */
 .dt{width:100%;border-collapse:collapse;font-size:13px;}
 .dt th{font-size:10px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:var(--g400);padding:8px 12px;text-align:left;border-bottom:1.5px solid var(--g200);}
@@ -92,11 +92,11 @@ body{font-family:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;background:
 .nh{font-weight:700;color:var(--pl);}
 .mbw{background:var(--g100);border-radius:3px;height:5px;width:90px;overflow:hidden;}
 .mbf{height:100%;border-radius:3px;}
- 
+
 /* BADGES */
 .badge{display:inline-flex;align-items:center;padding:2px 8px;border-radius:20px;font-size:10px;font-weight:600;}
 .bb{background:var(--pls);color:var(--pl);}.bp{background:#EDE9FE;color:#6D28D9;}.bg{background:#D1FAE5;color:#065F46;}.br{background:#FEE2E2;color:#991B1B;}
- 
+
 /* LEADERBOARD */
 .lbs{max-height:520px;overflow-y:auto;padding-right:2px;}
 .lbs::-webkit-scrollbar{width:3px;}.lbs::-webkit-scrollbar-thumb{background:var(--g200);border-radius:2px;}
@@ -112,7 +112,7 @@ body{font-family:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;background:
 .lbd{width:8px;height:8px;border-radius:2px;}
 .lbd.y{background:var(--grn);}.lbd.n{background:var(--g200);}
 .lbsc{font-size:12px;font-weight:800;color:var(--pl);width:32px;text-align:right;flex-shrink:0;}
- 
+
 /* CHECKER */
 .chero{background:linear-gradient(135deg,#0090FF 0%,#0060CC 100%);border-radius:var(--r);padding:36px 32px 32px;color:white;margin-bottom:20px;}
 .chero h2{font-size:22px;font-weight:800;margin-bottom:8px;}
@@ -122,14 +122,14 @@ body{font-family:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;background:
 .cinput::placeholder{color:rgba(255,255,255,.55);}.cinput:focus{border-color:rgba(255,255,255,.85);}
 .cbtn{padding:11px 22px;background:white;color:var(--pl);border:none;border-radius:var(--rs);font-size:14px;font-weight:700;font-family:inherit;cursor:pointer;white-space:nowrap;transition:opacity .15s;}
 .cbtn:hover{opacity:.9;}
- 
+
 /* RESULT CARD */
 .rcard{display:none;}.rcard.on{display:block;animation:fu .2s;}
 .chdr{display:flex;align-items:center;gap:14px;margin-bottom:20px;padding:16px;background:var(--g100);border-radius:var(--rs);}
 .cav{width:50px;height:50px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:800;color:white;flex-shrink:0;}
 .cnm{font-size:16px;font-weight:700;margin-bottom:3px;}
 .cmeta{font-size:12px;color:var(--g400);}
- 
+
 .wg{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-bottom:16px;}
 @media(max-width:600px){.wg{grid-template-columns:repeat(2,1fr);}}
 .wt{border-radius:var(--rs);padding:11px 8px;text-align:center;border:1.5px solid var(--g200);transition:transform .1s;}
@@ -140,7 +140,7 @@ body{font-family:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;background:
 .wtd{font-size:9px;color:var(--g400);line-height:1.4;margin-bottom:4px;}
 .wts{font-size:10px;font-weight:700;}
 .wt.ok .wts{color:#059669;}.wt.no .wts{color:#DC2626;}
- 
+
 .rsum{display:flex;align-items:center;gap:20px;flex-wrap:wrap;background:var(--g100);border-radius:var(--rs);padding:11px 14px;font-size:12px;font-weight:600;margin-bottom:12px;}
 .rsi{display:flex;align-items:center;gap:6px;}.rsd{width:7px;height:7px;border-radius:50%;}
 .malert{background:#FFF1F2;border:1.5px solid #FECDD3;border-radius:var(--rs);padding:14px 16px;font-size:13px;color:#991B1B;}
@@ -149,31 +149,31 @@ body{font-family:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;background:
 .palert{background:#F0FDF4;border:1.5px solid #BBF7D0;border-radius:var(--rs);padding:14px 16px;font-size:13px;color:#166534;}
 .palert strong{font-size:15px;display:block;margin-bottom:3px;}
 .nf{background:var(--g100);border:1px solid var(--g200);border-radius:var(--rs);padding:20px;text-align:center;color:var(--g400);font-size:13px;margin-top:12px;}
- 
+
 /* WEEK REF */
 .wrg{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px;}
 .wrt{background:var(--wh);border:1px solid var(--g200);border-radius:var(--rs);padding:12px 14px;}
 .wrtc{font-size:13px;font-weight:700;color:var(--pl);margin-bottom:2px;}
 .wrtd{font-size:11px;color:var(--g400);}
 .ibox{display:flex;gap:10px;background:var(--pls);border:1px solid #BAE6FD;border-radius:var(--rs);padding:12px 14px;font-size:12px;color:#075985;margin-top:14px;}
- 
+
 /* DONUT */
 .dwrap{position:relative;display:flex;align-items:center;justify-content:center;}
 .dctr{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;pointer-events:none;}
 .dnum{font-size:22px;font-weight:800;color:var(--blk);}
 .dlbl{font-size:10px;font-weight:600;color:var(--g400);letter-spacing:.6px;text-transform:uppercase;}
- 
+
 /* LEGEND */
 .leg{display:flex;gap:14px;flex-wrap:wrap;font-size:12px;margin-top:12px;}
 .lit{display:flex;align-items:center;gap:6px;}
 .lsw{width:9px;height:9px;border-radius:2px;flex-shrink:0;}
- 
+
 /* FOOTER */
 footer{background:var(--wh);border-top:1px solid var(--g200);padding:18px 24px;font-size:12px;color:var(--g400);}
 .fin{max-width:1280px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:6px;}
 footer a{color:var(--pl);text-decoration:none;}
 .hint{font-size:11px;color:var(--g400);padding:10px 0;}
- 
+
 /* ── PASSWORD GATE ── */
 #gate-overlay{position:fixed;inset:0;z-index:9999;background:#F7F9FC;display:flex;align-items:center;justify-content:center;}
 #gate-overlay.hidden{display:none;}
@@ -193,7 +193,7 @@ footer a{color:var(--pl);text-decoration:none;}
 </style>
 </head>
 <body>
- 
+
 <!-- ══ PASSWORD GATE ══ -->
 <div id="gate-overlay">
   <div class="gate-card">
@@ -211,7 +211,7 @@ footer a{color:var(--pl);text-decoration:none;}
     <div class="gate-hint">Contact your program lead if you need the access code.</div>
   </div>
 </div>
- 
+
 <div class="topbar">
   <div class="tb-in">
     <a class="brand" href="#">
@@ -226,7 +226,7 @@ footer a{color:var(--pl);text-decoration:none;}
     </div>
   </div>
 </div>
- 
+
 <div class="abanner" id="abanner">
   <div class="ain">
     <span>&#9888;&#65039;</span>
@@ -234,7 +234,7 @@ footer a{color:var(--pl);text-decoration:none;}
     <button class="alink" onclick="jumpChecker()">&#8594; Check my submissions</button>
   </div>
 </div>
- 
+
 <div class="hero">
   <div class="hero-in">
     <div class="eyebrow">Protocol Labs Developer Guild &middot; Cohort 6</div>
@@ -249,7 +249,7 @@ footer a{color:var(--pl);text-decoration:none;}
     </div>
   </div>
 </div>
- 
+
 <div class="tabs-bar">
   <div class="tabs-in">
     <button class="tab active" onclick="goTab('overview',this)">Overview</button>
@@ -259,9 +259,9 @@ footer a{color:var(--pl);text-decoration:none;}
     <button class="tab" onclick="goTab('checker',this)">&#10003; Submission Checker</button>
   </div>
 </div>
- 
+
 <div class="page">
- 
+
   <div class="panel active" id="panel-overview">
     <div class="kpis" id="kpi0"></div>
     <div class="grid g2">
@@ -282,7 +282,7 @@ footer a{color:var(--pl);text-decoration:none;}
     </div>
     <p class="hint">&#128161; Data not refreshing? Hard refresh &mdash; <strong>Cmd+Shift+R</strong> (Mac) or <strong>Ctrl+Shift+R</strong> (Win)</p>
   </div>
- 
+
   <div class="panel" id="panel-techpartners">
     <div class="sh"><h2>Tech Partner Contributions</h2><p>Engagement and issues/PRs across all PLDG tech partner repos across all 10 program weeks.</p></div>
     <div class="grid g21">
@@ -296,7 +296,7 @@ footer a{color:var(--pl);text-decoration:none;}
     <div class="card" style="margin-bottom:16px;"><div class="ct"><div class="cd" style="background:var(--amb)"></div>Weekly Engagement by Tech Partner (Top 5)</div><div class="cw h300"><canvas id="c-tpw"></canvas></div></div>
     <div class="card"><div class="ct"><div class="cd"></div>Tech Partner Summary</div><div style="overflow-x:auto;"><table class="dt" id="tptbl"></table></div></div>
   </div>
- 
+
   <div class="panel" id="panel-nps">
     <div class="sh"><h2>NPS &amp; Program Sentiment</h2><p>How contributors rated the PLDG program over time, plus mentor program satisfaction.</p></div>
     <div class="kpis" id="kpin"></div>
@@ -313,7 +313,7 @@ footer a{color:var(--pl);text-decoration:none;}
       <div class="card"><div class="ct"><div class="cd" style="background:var(--amb)"></div>Mentor Program Ratings</div><div class="cw h220"><canvas id="c-men"></canvas></div></div>
     </div>
   </div>
- 
+
   <div class="panel" id="panel-contributors">
     <div class="sh"><h2>Contributor Activity</h2><p>Active headcount, completion rates, and the full leaderboard sorted by total submissions.</p></div>
     <div class="grid g2">
@@ -322,7 +322,7 @@ footer a{color:var(--pl);text-decoration:none;}
     </div>
     <div class="card"><div class="ct"><div class="cd" style="background:var(--amb)"></div>Leaderboard &mdash; Total Weeks Submitted</div><div class="lbs" id="lbc"></div></div>
   </div>
- 
+
   <div class="panel" id="panel-checker">
     <div class="chero">
       <h2>Submission Checker</h2>
@@ -342,23 +342,23 @@ footer a{color:var(--pl);text-decoration:none;}
       <div class="ibox"><span>&#8505;&#65039;</span><div>Data reflects WES submissions through <strong>Week 11 (Mar 22&ndash;27)</strong>. If you submitted recently, allow up to 24h for sync. Contact your program lead if you believe there is a discrepancy.</div></div>
     </div>
   </div>
- 
+
 </div>
- 
+
 <footer>
   <div class="fin">
     <span>Protocol Labs &middot; PLDG Cohort 6 &middot; Engagement Dashboard</span>
     <span>Jan 11 &ndash; Mar 27, 2026 &nbsp;&middot;&nbsp; <a href="https://pldg.io" target="_blank">pldg.io</a></span>
   </div>
 </footer>
- 
+
 <script>
- 
+
 /* ── PASSWORD GATE ──
    Change GATE_CODE below to whatever you want.
    Uses sessionStorage so contributors only enter it once per browser session. */
 const GATE_CODE = 'pldg2026';
- 
+
 function checkGate() {
   const val = document.getElementById('gate-input').value.trim();
   if (val === GATE_CODE) {
@@ -373,7 +373,7 @@ function checkGate() {
     setTimeout(() => input.classList.remove('error'), 400);
   }
 }
- 
+
 (function initGate() {
   if (sessionStorage.getItem('pldg_auth') === GATE_CODE) {
     document.getElementById('gate-overlay').classList.add('hidden');
@@ -385,13 +385,13 @@ function checkGate() {
     }, 100);
   }
 })();
- 
+
 /* ===== LIVE DATA CONFIG =====
    Set AIRTABLE_ENDPOINT to your proxy URL when ready.
    Leave null to use the bundled static snapshot.
    See deployment guide in comments at bottom of file. */
 const AIRTABLE_ENDPOINT = 'https://royal-mud-e5b3.anubha-6d2.workers.dev';
- 
+
 const WEEKS=[
   {key:'2026-W02 (Jan 11 \u2013 Jan 17)',code:'Week 1', label:'Jan 11\u201317'},
   {key:'2026-W03 (Jan 18 \u2013 Jan 24)',code:'Week 2', label:'Jan 18\u201324'},
@@ -405,15 +405,15 @@ const WEEKS=[
   {key:'2026-W11 (Mar 15 \u2013 Mar 21)',code:'Week 10',label:'Mar 15\u201321'},
   {key:'2026-W12 (Mar 22 \u2013 Mar 28)',code:'Week 11',label:'Mar 22\u201327'},
 ];
- 
- 
+
+
 const TC={Libp2p:'#0090FF',Storacha:'#7C3AED',Akave:'#12B76A','Fil-Oz':'#F79009',Drand:'#EC4899','Open Source Observer':'#06B6D4','Space Meridian':'#F97316',IPFS:'#34D399','Fil-B':'#A78BFA',Lighthouse:'#FCD34D','Filecoin Foundation':'#6366F1','(other)':'#94A3B8'};
- 
- 
+
+
 /* CHART BASE */
 const BASE={responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{backgroundColor:'#1A1A2E',borderColor:'#E2E8F0',borderWidth:1,titleColor:'#F8FAFC',bodyColor:'#CBD5E1',titleFont:{family:'Inter',size:11,weight:'600'},bodyFont:{family:'Inter',size:12},padding:10,cornerRadius:7}},scales:{x:{grid:{color:'#F7F9FC'},ticks:{color:'#8892A4',font:{family:'Inter',size:10}}},y:{grid:{color:'#F7F9FC'},ticks:{color:'#8892A4',font:{family:'Inter',size:10}}}}};
 const cfg=o=>({...BASE,plugins:{...BASE.plugins,...(o.plugins||{})},scales:{...BASE.scales,...(o.scales||{})},...o});
- 
+
 /* TABS */
 function goTab(id,btn){
   document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
@@ -428,14 +428,14 @@ function jumpChecker(){
   document.querySelectorAll('.tab')[4].classList.add('active');
   document.getElementById('abanner').classList.remove('on');
 }
- 
+
 /* ═══════════════════════════════════════════════
    LIVE DATA PROCESSING
    Fetches raw records from Airtable via Cloudflare
    Worker, processes them into the same shape as the
    static snapshot, then rebuilds all charts live.
 ═══════════════════════════════════════════════ */
- 
+
 const CANONICAL_WEEKS = [
   '2026-W02 (Jan 11 – Jan 17)',
   '2026-W03 (Jan 18 – Jan 24)',
@@ -449,14 +449,14 @@ const CANONICAL_WEEKS = [
   '2026-W11 (Mar 15 – Mar 21)',
   '2026-W12 (Mar 22 – Mar 28)',
 ];
- 
+
 /* Static data removed — dashboard is fully live from Airtable.
    These are empty stubs; buildAll() populates them from processRecords(). */
 let WS = [];
 let TT = {};
 let TI = {};
 let CONTRIBUTORS = [];
- 
+
 /* hashEmail — lets contributors look up by email in the checker
    without the raw email being stored anywhere in the browser state */
 function hashEmail(email) {
@@ -472,22 +472,36 @@ function hashEmail(email) {
   while (tmp > 0) { out = chars[tmp % 36] + out; tmp = Math.floor(tmp / 36); }
   return out;
 }
- 
+
 function processRecords(records) {
   // records = raw Airtable [{id, fields:{...}}, ...]
-  // No week filter needed — Airtable view already scoped to Cohort 6
-  // Skip rows where Program Week selects multiple weeks (comma in value)
-  const rows = records
-    .map(r => r.fields || r)
-    .filter(f => {
-      const w = f['Program Week'] || f.week || '';
-      return w.length > 0 && !w.includes(',');
-    });
- 
+  // Filter to Cohort 6 records only (2026-W weeks)
+  // Multi-week entries (comma-separated) are EXPANDED into one row per week
+  // so a submission like "W09,W10" counts for both weeks
+  const rawRows = records.map(r => r.fields || r);
+
+  const rows = [];
+  rawRows.forEach(f => {
+    const w = f['Program Week'] || f.week || '';
+    if (!w || !w.includes('2026-W')) return; // skip non-Cohort-6
+
+    if (w.includes(',')) {
+      // Multi-week — split and create a copy for each week
+      w.split(',').forEach(part => {
+        const week = part.trim();
+        if (week.startsWith('2026-W')) {
+          rows.push({ ...f, 'Program Week': week });
+        }
+      });
+    } else {
+      rows.push(f);
+    }
+  });
+
   // normalise field access — works whether worker sends r.fields or flat
   const g = (row, fullKey, shortKey) =>
     row[fullKey] !== undefined ? row[fullKey] : (row[shortKey] !== undefined ? row[shortKey] : null);
- 
+
   // ── WEEK SUMMARY ──────────────────────────────
   const ws = WEEKS.map(wk => {
     // normalise dashes so U+2013 en-dash and literal – both match
@@ -496,7 +510,7 @@ function processRecords(records) {
       const w = r['Program Week'] || r.week || '';
       return norm(w) === norm(wk.key);
     });
- 
+
     const npsNums = weekRows
       .map(r => parseFloat(g(r,'How likely are you to recommend the PLDG to others?','nps')))
       .filter(n => !isNaN(n));
@@ -504,20 +518,20 @@ function processRecords(records) {
     const detractors = npsNums.filter(n => n < 7).length;
     const npsScore   = npsNums.length ? Math.round((promoters-detractors)/npsNums.length*100) : 0;
     const npsAvg     = npsNums.length ? Math.round(npsNums.reduce((a,b)=>a+b,0)/npsNums.length*100)/100 : 0;
- 
+
     const hours = weekRows
       .map(r => parseFloat(g(r,'How many hours did you spend this week on PLDG-related work?','hours')))
       .filter(n => !isNaN(n));
     const hoursAvg = hours.length ? Math.round(hours.reduce((a,b)=>a+b,0)/hours.length*10)/10 : 0;
- 
+
     const issues = weekRows
       .map(r => parseFloat(g(r,'How many issues, PRs, or projects this week?','issues')))
       .filter(n => !isNaN(n));
     const issuesTotal = Math.round(issues.reduce((a,b)=>a+b,0));
- 
+
     const emailField = r => (r['Email Address'] || r.emailHash || '').toString().toLowerCase().trim();
     const uniqueContribs = new Set(weekRows.map(emailField)).size;
- 
+
     const tp = {};
     weekRows.forEach(r => {
       for (let i = 1; i <= 7; i++) {
@@ -525,10 +539,10 @@ function processRecords(records) {
         if (t && t.trim()) { const name = t.trim(); tp[name] = (tp[name]||0)+1; }
       }
     });
- 
+
     return { w: wk.code, s: weekRows.length, c: uniqueContribs, h: hoursAvg, ti: issuesTotal, na: npsAvg, ns: npsScore, tp };
   });
- 
+
   // ── CONTRIBUTOR GRID ──────────────────────────
   const contribMap = {};
   rows.forEach(r => {
@@ -544,13 +558,14 @@ function processRecords(records) {
         weeks_submitted: []
       };
     }
+    // rows are already expanded — each row has a single week
     const wk = r['Program Week'] || r.week || '';
-    if (!contribMap[key].weeks_submitted.includes(wk)) {
+    if (wk && !contribMap[key].weeks_submitted.includes(wk)) {
       contribMap[key].weeks_submitted.push(wk);
     }
   });
   const contributors = Object.values(contribMap);
- 
+
   // ── TP TOTALS ─────────────────────────────────
   const ttCounts = {}, tiCounts = {};
   rows.forEach(r => {
@@ -564,7 +579,7 @@ function processRecords(records) {
       }
     }
   });
- 
+
   // ── NPS OVERALL ───────────────────────────────
   const allNps = rows
     .map(r => parseFloat(g(r,'How likely are you to recommend the PLDG to others?','nps')))
@@ -573,7 +588,7 @@ function processRecords(records) {
   const promoters  = allNps.filter(n => n >= 9).length;
   const passives   = allNps.filter(n => n >= 7 && n < 9).length;
   const detractors = allNps.filter(n => n < 7).length;
- 
+
   // ── ENGAGEMENT DIST ───────────────────────────
   const engDist = {5:0,4:0,3:0,2:0,1:0,0:0};
   rows.forEach(r => {
@@ -583,7 +598,7 @@ function processRecords(records) {
       if (s in engDist) engDist[s]++;
     }
   });
- 
+
   // ── MENTOR DIST ───────────────────────────────
   const mentorDist = {'5':0,'4':0,'3':0,'2':0,'1':0,'0':0};
   rows.forEach(r => {
@@ -593,11 +608,11 @@ function processRecords(records) {
       if (s in mentorDist) mentorDist[s]++;
     }
   });
- 
+
   // ── TRACK SPLIT ───────────────────────────────
   const track1 = contributors.filter(c => c.type.includes('Track 1')).length;
   const track2 = contributors.filter(c => c.type.includes('Track 2')).length;
- 
+
   // ── TOTALS ────────────────────────────────────
   const totalSubs   = ws.reduce((a,b) => a+b.s, 0);
   const totalIssues = ws.reduce((a,b) => a+b.ti, 0);
@@ -610,49 +625,55 @@ function processRecords(records) {
     const submitted = new Set(c.weeks_submitted.map(norm2));
     return normKeys.filter(k => submitted.has(k)).length === WEEKS.length;
   }).length;
- 
+
   return { ws, contributors, ttCounts, tiCounts, overallNpsAvg, promoters, passives, detractors, engDist, mentorDist, track1, track2, totalSubs, totalIssues, avgHours, perfect, totalContribs: contributors.length };
 }
- 
+
 async function tryLive() {
   if (!AIRTABLE_ENDPOINT) {
     buildAll(null);
     return;
   }
- 
+
   const lbl = document.getElementById('dlbl');
   lbl.textContent = 'Loading live data…';
- 
+
   try {
     console.log('[PLDG] Fetching:', AIRTABLE_ENDPOINT);
     const r = await fetch(AIRTABLE_ENDPOINT);
     console.log('[PLDG] Response status:', r.status, r.ok);
     console.log('[PLDG] Response headers:', [...r.headers.entries()]);
- 
+
     if (!r.ok) {
       throw new Error('HTTP ' + r.status + ' ' + r.statusText);
     }
- 
+
     const d = await r.json();
     console.log('[PLDG] Records received:', d.total, 'first record keys:', d.records && d.records[0] ? Object.keys(d.records[0]) : 'none');
     console.log('[PLDG] First record sample:', d.records && d.records[0] ? JSON.stringify(d.records[0]).substring(0, 300) : 'none');
- 
+
     if (d.error) throw new Error('Airtable error: ' + JSON.stringify(d.error));
     if (!d.records || !d.records.length) throw new Error('Empty records');
- 
-    const processed = processRecords(d.records);
-    console.log('[PLDG] Processed:', processed.totalContribs, 'contributors,', processed.totalSubs, 'submissions');
- 
+
+    let processed;
+    try {
+      processed = processRecords(d.records);
+      console.log('[PLDG] Processed:', processed.totalContribs, 'contributors,', processed.totalSubs, 'submissions,', processed.totalIssues, 'issues');
+    } catch(pe) {
+      console.error('[PLDG] processRecords ERROR:', pe.name, pe.message, pe.stack);
+      throw pe;
+    }
+
     lbl.textContent = 'Live · Airtable · ' + d.total + ' records · ' + new Date().toLocaleTimeString();
     buildAll(processed);
- 
+
   } catch(e) {
     console.error('[PLDG] FAILED:', e.name, '|', e.message);
     lbl.textContent = 'Error: ' + e.message;
     buildAll(null);
   }
 }
- 
+
 /* URL ?check= AUTO-LOOKUP */
 function checkParam(){
   const p=new URLSearchParams(location.search).get('check');
@@ -661,13 +682,13 @@ function checkParam(){
   runChecker();
   goTab('checker',document.querySelectorAll('.tab')[4]);
 }
- 
+
 window.addEventListener('DOMContentLoaded',()=>{
   buildChecker();
   tryLive();
   checkParam();
 });
- 
+
 /* buildAll — called with live data or null (use static snapshot) */
 function buildAll(live) {
   // If live data available, override static constants
@@ -720,7 +741,7 @@ function buildAll(live) {
   buildNPS(live);
   buildContribs(live);
 }
- 
+
 /* OVERVIEW */
 function buildOverview(live){
   const wl=WS.map(w=>w.w);
@@ -760,7 +781,7 @@ function buildOverview(live){
   document.getElementById('trctr').innerHTML='<div class="dnum">'+(live?live.totalContribs:79)+'</div><div class="dlbl">total</div>';
   document.getElementById('trleg').innerHTML=[['#0090FF','Track 1 · New ('+(live?live.track1:31)+')'],['#7C3AED','Track 2 · Returning ('+(live?live.track2:48)+')']].map(([c,l])=>'<div class="lit"><div class="lsw" style="background:'+c+';border-radius:50%"></div>'+l+'</div>').join('');
 }
- 
+
 /* TECH PARTNERS */
 function buildTP(live){
   const nm=Object.keys(TT).sort((a,b)=>TT[b]-TT[a]);
@@ -784,7 +805,7 @@ function buildTP(live){
   });
   tbl.appendChild(tb);
 }
- 
+
 /* NPS */
 function buildNPS(live){
   const wl=WS.map(w=>w.w);
@@ -819,7 +840,7 @@ function buildNPS(live){
   const mr={'5–Excellent':live?live.mentorDist['5']:185,'4–Very Good':live?live.mentorDist['4']:67,'3–Good':live?live.mentorDist['3']:54,'2–Fair':live?live.mentorDist['2']:9,'1–Poor':live?live.mentorDist['1']:1,'Did not participate':live?live.mentorDist['0']:256};
   new Chart(document.getElementById('c-men'),{type:'bar',data:{labels:Object.keys(mr),datasets:[{data:Object.values(mr),backgroundColor:['#12B76A','#34D399','#6EE7B7','#F79009','#F04438','#E2E8F0'],borderRadius:5}]},options:cfg({scales:{x:{...BASE.scales.x,ticks:{...BASE.scales.x.ticks,maxRotation:35,font:{family:'Inter',size:10}}},y:BASE.scales.y}})});
 }
- 
+
 /* CONTRIBUTORS */
 function buildContribs(live){
   const wl=WS.map(w=>w.w);
@@ -843,27 +864,27 @@ function buildContribs(live){
     lb.appendChild(row);
   });
 }
- 
+
 /* CHECKER */
 function buildChecker(){
   const g=document.getElementById('wrg');
   WEEKS.forEach(w=>{const d=document.createElement('div');d.className='wrt';d.innerHTML='<div class="wrtc">'+w.code+'</div><div class="wrtd">'+w.label+'</div>';g.appendChild(d);});
   document.getElementById('cinput').addEventListener('keydown',e=>{if(e.key==='Enter')runChecker();});
 }
- 
+
 function runChecker(){
   const q=document.getElementById('cinput').value.trim().toLowerCase();
   const out=document.getElementById('rcard');
   out.classList.remove('on');
   if(!q)return;
- 
+
   // If live data hasn't loaded yet, show a helpful message
   if(!CONTRIBUTORS.length){
     out.classList.add('on');
     out.innerHTML='<div class="nf" style="color:var(--pl)">&#9203; Live data is still loading&hellip; Please wait a moment and try again.</div>';
     return;
   }
- 
+
   // Match by emailHash (typed email → hash), github handle, or full name
   const qHash = hashEmail(q);
   const f=CONTRIBUTORS.find(c=>
@@ -887,12 +908,12 @@ function runChecker(){
     :'<div class="malert"><strong>&#9888;&#65039; '+miss.length+' week'+(miss.length>1?'s':'')+' missing</strong><span class="mwks">'+miss.map(w=>w.code).join(' · ')+'</span><p style="margin-top:6px;color:#B91C1C;font-size:12px;">If the program is still active, please submit your WES for the missing weeks immediately. Missing submissions may affect your completion status and program record.</p></div>';
   out.innerHTML='<div class="chdr"><div class="cav" style="background:'+(isN?'#0090FF':'#7C3AED')+'">'+ini+'</div><div><div class="cnm">'+f.name+' <span class="badge '+(isN?'bb':'bp')+'" style="margin-left:8px">'+(isN?'Track 1 · New':'Track 2 · Returning')+'</span></div><div class="cmeta">@'+f.github+'</div></div></div><div class="wg">'+wh+'</div><div class="rsum"><div class="rsi"><div class="rsd" style="background:#12B76A"></div>'+n+'/10 weeks submitted ('+(n/10*100).toFixed(0)+'%)</div>'+(miss.length>0?'<div class="rsi"><div class="rsd" style="background:#F04438"></div>'+miss.length+' missing</div>':'')+'</div>'+alert;
 }
- 
+
 /*
   ====================================================================
   DEPLOYMENT GUIDE
   ====================================================================
- 
+
   STEP 1 - DEPLOY TO GITHUB PAGES
   --------------------------------
   1. Go to github.com/new - create a new PUBLIC repo
@@ -901,12 +922,12 @@ function runChecker(){
   3. Settings -> Pages -> Source: main / (root) -> Save
   4. Live in ~30 sec at:
      https://YOUR_USERNAME.github.io/pldg-cohort6-dashboard/
- 
+
   STEP 2 - CONNECT LIVE AIRTABLE DATA
   -------------------------------------
   GitHub Pages can only serve static files - secrets must live in
   a lightweight backend proxy. Two free options:
- 
+
   OPTION A: Cloudflare Workers (recommended)
     - workers.cloudflare.com -> Create Worker
     - Worker code:
@@ -930,7 +951,7 @@ function runChecker(){
     - Settings -> Variables -> Secret: AT_KEY = your Airtable API key
     - Deploy -> copy Worker URL
     - In this file: const AIRTABLE_ENDPOINT = 'https://xxx.workers.dev/';
- 
+
   OPTION B: Vercel Edge Function (also free)
     - Create /api/wes.js:
         export default async (req, res) => {
@@ -943,24 +964,24 @@ function runChecker(){
         };
     - Add env vars BASE and KEY in Vercel dashboard
     - const AIRTABLE_ENDPOINT = 'https://your-app.vercel.app/api/wes';
- 
+
   STEP 3 - HOW CONTRIBUTORS KNOW THEY HAVEN'T SUBMITTED
   -------------------------------------------------------
   Three mechanisms are built into this dashboard:
- 
+
   1. SUBMISSION CHECKER TAB
      Contributors type their email or GitHub username.
      They get an instant green/red week grid, and a bold
      red alert listing every missing week code (W05, W09, etc.)
      with clear instructions to submit immediately.
- 
+
   2. PERSONALISED LINK (URL ?check= parameter)
      Send each contributor a personalized link:
        https://yoursite.github.io/pldg-dashboard/?check=their@email.com
      The dashboard auto-runs their check on page load.
      You can generate these links from Airtable and include
      them in your weekly Discord/Slack digest.
- 
+
   3. AIRTABLE AUTOMATION (weekly reminder emails)
      In Airtable Automations:
      - Trigger: "Scheduled - Every Monday at 9am IST"
@@ -970,7 +991,7 @@ function runChecker(){
          Body: "Hey [name], your WES for Week X is missing.
                Submit here: [form link]
                Check your status: [dashboard]/?check=[email]"
- 
+
   ====================================================================
 */
 </script>
