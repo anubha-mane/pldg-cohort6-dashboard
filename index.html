@@ -896,10 +896,19 @@ function runChecker(){
   );
   out.classList.add('on');
   if(!f){out.innerHTML='<div class="nf">No contributor found for "<strong>'+q+'</strong>".<br>Try your registered email address or GitHub username (case-insensitive).</div>';return;}
-  const sub=new Set(f.weeks_submitted.filter(w=>WEEKS.some(ww=>ww.key===w)));
-  const n=sub.size;
-  const normW = s => s.replace(/\u2013|\u2014|–|—/g,'-').trim();
-  const miss=WEEKS.filter(w=>![...sub].some(s=>normW(s)===normW(w.key)));
+  // Normalise dashes so all comparisons work regardless of encoding
+  const normW = s => s.replace(/\u2013|\u2014|–|—/g, '-').trim();
+  const normKeys = new Map(WEEKS.map(wk => [normW(wk.key), wk.key]));
+  // Build submitted set using normalised keys
+  const submittedNorm = new Set(
+    f.weeks_submitted
+      .filter(w => w && w.startsWith('2026-W'))
+      .map(normW)
+  );
+  const n = submittedNorm.size;
+  const miss = WEEKS.filter(wk => !submittedNorm.has(normW(wk.key)));
+  // sub used for display — check via normalised comparison
+  const sub = { has: wk => submittedNorm.has(normW(wk)) };
   const isN=f.type.includes('Track 1');
   const ini=f.name.split(' ').map(x=>x[0]).join('').substring(0,2).toUpperCase();
   const wh=WEEKS.map(w=>{const ok=sub.has(w.key);return '<div class="wt '+(ok?'ok':'no')+'"><div class="wtc">'+w.code+'</div><div class="wtd">'+w.label+'</div><div class="wts">'+(ok?'&#10003; Filed':'&#10007; Missing')+'</div></div>';}).join('');
