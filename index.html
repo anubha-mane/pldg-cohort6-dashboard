@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>PLDG Cohort 6 &middot; Dev Guild Dashboard</title>
+<title>PL Dev Guild · Cohort 6 Engagement Dashboard</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -200,7 +200,7 @@ footer a{color:var(--pl);text-decoration:none;}
     <div class="gate-logo">
       <svg viewBox="0 0 17 17"><rect x="2" y="2" width="5.5" height="13" rx="1.2"/><rect x="9.5" y="2" width="5.5" height="8.5" rx="1.2"/></svg>
     </div>
-    <div class="gate-title">PLDG Cohort 6 Dashboard</div>
+    <div class="gate-title">PL Dev Guild · Cohort 6</div>
     <div class="gate-sub">Protocol Labs Developer Guild &middot; Enter access code to continue</div>
     <input class="gate-input" id="gate-input" type="password"
       placeholder="&#9679;&#9679;&#9679;&#9679;&#9679;&#9679;"
@@ -216,7 +216,7 @@ footer a{color:var(--pl);text-decoration:none;}
   <div class="tb-in">
     <a class="brand" href="#">
       <div class="brand-ic"><svg viewBox="0 0 17 17"><rect x="2" y="2" width="5.5" height="13" rx="1.2"/><rect x="9.5" y="2" width="5.5" height="8.5" rx="1.2"/></svg></div>
-      <span class="brand-nm">Protocol Labs</span>
+      <span class="brand-nm">Protocol Labs Dev Guild</span>
       <span class="brand-sep">&middot;</span>
       <span class="brand-sub">PLDG Cohort 6</span>
     </a>
@@ -238,7 +238,7 @@ footer a{color:var(--pl);text-decoration:none;}
 <div class="hero">
   <div class="hero-in">
     <div class="eyebrow">Protocol Labs Developer Guild &middot; Cohort 6</div>
-    <h1 class="h1">Dev Guild Engagement Dashboard</h1>
+    <h1 class="h1">PL Dev Guild Engagement Dashboard</h1>
     <p class="hdesc">Weekly survey analytics, tech partner contributions, NPS trends, and submission tracking for all contributors across the 11-week program.</p>
     <div class="hstats">
       <div class="hstat"><div><strong id="hero-contribs">79</strong><span>Contributors</span></div></div>
@@ -348,7 +348,7 @@ footer a{color:var(--pl);text-decoration:none;}
 <footer>
   <div class="fin">
     <span>Protocol Labs &middot; PLDG Cohort 6 &middot; Engagement Dashboard</span>
-    <span>Jan 11 &ndash; Mar 27, 2026 &nbsp;&middot;&nbsp; <a href="https://pldg.io" target="_blank">pldg.io</a></span>
+    <span>Jan 11 &ndash; Mar 27, 2026 &nbsp;&middot;&nbsp; <a href="https://pldg.io" target="_blank">pldg.io</a> &nbsp;&middot;&nbsp; Dashboard by <a href="https://twitter.com/anubhamane4" target="_blank" style="color:var(--pl);text-decoration:none;font-weight:500;">Anubha Maneshwar</a></span>
   </div>
 </footer>
 
@@ -909,14 +909,11 @@ function runChecker(){
   const normW = s => s.replace(/\u2013|\u2014|–|—/g, '-').trim();
   const normKeys = new Map(WEEKS.map(wk => [normW(wk.key), wk.key]));
   // Build submitted set using normalised keys
-  console.log('[PLDG Checker] weeks_submitted raw:', JSON.stringify(f.weeks_submitted));
   const submittedNorm = new Set(
     f.weeks_submitted
       .filter(w => w && w.startsWith('2026-W'))
       .map(normW)
   );
-  console.log('[PLDG Checker] submittedNorm:', [...submittedNorm]);
-  console.log('[PLDG Checker] WEEKS keys normalised:', WEEKS.map(w => normW(w.key)));
   const n = submittedNorm.size;
   const miss = WEEKS.filter(wk => !submittedNorm.has(normW(wk.key)));
   // sub used for display — check via normalised comparison
