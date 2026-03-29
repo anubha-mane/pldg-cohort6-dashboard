@@ -331,6 +331,9 @@ footer a{color:var(--pl);text-decoration:none;}
         <input class="cinput" id="cinput" type="text" placeholder="your@email.com  or  github_username" autocomplete="off"/>
         <button class="cbtn" onclick="runChecker()">Check &#8594;</button>
       </div>
+      <div id="checker-status" style="margin-top:12px;font-size:12px;opacity:.75;">
+        &#9203; Loading contributor records&hellip;
+      </div>
     </div>
     <div class="rcard card" id="rcard"></div>
     <div class="card" style="margin-top:16px;">
@@ -621,6 +624,16 @@ function buildAll(live) {
     Object.keys(TI).forEach(k => delete TI[k]);
     Object.assign(TI, live.tiCounts);
   }
+  // Update checker status
+  const cs = document.getElementById('checker-status');
+  if (cs) {
+    if (live) {
+      cs.textContent = '✅ ' + live.totalContribs + ' contributors loaded · ' + live.totalSubs + ' submissions';
+      cs.style.opacity = '0.75';
+    } else {
+      cs.textContent = '⚠️ Could not load live data — checker unavailable';
+    }
+  }
   // Update hero stats
   if (live) {
     const hs = document.getElementById('hero-subs');
@@ -773,11 +786,20 @@ function runChecker(){
   const out=document.getElementById('rcard');
   out.classList.remove('on');
   if(!q)return;
-  // Match by emailHash (if user typed email), github, or name
+ 
+  // If live data hasn't loaded yet, show a helpful message
+  if(!CONTRIBUTORS.length){
+    out.classList.add('on');
+    out.innerHTML='<div class="nf" style="color:var(--pl)">&#9203; Live data is still loading&hellip; Please wait a moment and try again.</div>';
+    return;
+  }
+ 
+  // Match by emailHash (typed email → hash), github handle, or full name
   const qHash = hashEmail(q);
   const f=CONTRIBUTORS.find(c=>
     (c.emailHash && c.emailHash===qHash) ||
     (c.github && c.github.toLowerCase()===q) ||
+    (c.github && c.github.toLowerCase()==='@'+q) ||
     (c.name && c.name.toLowerCase()===q)
   );
   out.classList.add('on');
