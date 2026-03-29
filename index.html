@@ -488,13 +488,15 @@ function processRecords(records) {
     if (w.includes(',')) {
       // Multi-week — split and create a copy for each week
       w.split(',').forEach(part => {
-        const week = part.trim();
+        const week = part.trim().replace(/–|—|–|—/g, '-');
         if (week.startsWith('2026-W')) {
           rows.push({ ...f, 'Program Week': week });
         }
       });
     } else {
-      rows.push(f);
+      // Normalise dashes in week value
+      const normW2 = s => s.replace(/–|—|–|—/g, '-').trim();
+      rows.push({ ...f, 'Program Week': normW2(w) });
     }
   });
 
@@ -558,8 +560,9 @@ function processRecords(records) {
         weeks_submitted: []
       };
     }
-    // rows are already expanded — each row has a single week
-    const wk = r['Program Week'] || r.week || '';
+    // Store normalised week key so checker comparisons always work
+    const normWk = s => s.replace(/–|—|‒|[‐-―]|–|—|-/g, '-').trim();
+    const wk = normWk(r['Program Week'] || r.week || '');
     if (wk && !contribMap[key].weeks_submitted.includes(wk)) {
       contribMap[key].weeks_submitted.push(wk);
     }
@@ -866,6 +869,12 @@ function buildContribs(live){
 }
 
 /* CHECKER */
+function buildChecker(){
+  const g=document.getElementById('wrg');
+  WEEKS.forEach(w=>{const d=document.createElement('div');d.className='wrt';d.innerHTML='<div class="wrtc">'+w.code+'</div><div class="wrtd">'+w.label+'</div>';g.appendChild(d);});
+  document.getElementById('cinput').addEventListener('keydown',e=>{if(e.key==='Enter')runChecker();});
+}
+
 function buildChecker(){
   const g=document.getElementById('wrg');
   WEEKS.forEach(w=>{const d=document.createElement('div');d.className='wrt';d.innerHTML='<div class="wrtc">'+w.code+'</div><div class="wrtd">'+w.label+'</div>';g.appendChild(d);});
