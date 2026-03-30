@@ -760,9 +760,10 @@ function buildOverview(live){
   const totalS = live ? live.totalSubs : 575;
   const avgH = live ? live.avgHours+'h' : '21.0h';
   const npsAvg = live ? live.overallNpsAvg.toFixed(2)+'/10' : '9.03/10';
-  const perfect = live
-    ? live.contributors.filter(c=>c.weeks_submitted.filter(w=>CANONICAL_WEEKS.includes(w)).length===11).length
-    : CONTRIBUTORS.filter(c=>c.weeks_submitted.filter(w=>WEEKS.some(ww=>ww.key===w)).length===11).length;
+  const normP = s => s.replace(/\u2013|\u2014|[\u2010-\u2015]/g,'-').trim();
+  const normCW = CANONICAL_WEEKS.map(normP);
+  const perfect = (live ? live.contributors : CONTRIBUTORS)
+    .filter(c => c.weeks_submitted.filter(w => normCW.includes(normP(w))).length === 11).length;
   const strip=document.getElementById('kpi0');
   strip.innerHTML='';
   [{l:'Total Contributors',v:totalC,s:t1+' New · '+t2+' Returning',c:'#0090FF'},
@@ -853,15 +854,16 @@ function buildNPS(live){
 function buildContribs(live){
   const wl=WS.map(w=>w.w);
   new Chart(document.getElementById('c-act'),{type:'line',data:{labels:wl,datasets:[{data:WS.map(w=>w.c),borderColor:'#0090FF',backgroundColor:'rgba(0,144,255,.07)',fill:true,tension:.4,pointBackgroundColor:'#0090FF',pointRadius:5,borderWidth:2}]},options:cfg({})});
-  const bk={'1–2':0,'3–4':0,'5–6':0,'7–8':0,'9':0,'10 (All)':0};
+  const normK = s => s.replace(/\u2013|\u2014|–|—|[‐-―]/g,'-').trim();
+  const bk={'1–2':0,'3–4':0,'5–6':0,'7–8':0,'9–10':0,'11 (All)':0};
   CONTRIBUTORS.forEach(c=>{
-    const n=c.weeks_submitted.filter(w=>WEEKS.some(ww=>ww.key===w)).length;
-    if(n<=2)bk['1–2']++;else if(n<=4)bk['3–4']++;else if(n<=6)bk['5–6']++;else if(n<=8)bk['7–8']++;else if(n===9)bk['9']++;else bk['10 (All)']++;
+    const n=c.weeks_submitted.filter(w=>WEEKS.some(ww=>normK(ww.key)===normK(w))).length;
+    if(n<=2)bk['1–2']++;else if(n<=4)bk['3–4']++;else if(n<=6)bk['5–6']++;else if(n<=8)bk['7–8']++;else if(n<=10)bk['9–10']++;else bk['11 (All)']++;
   });
   new Chart(document.getElementById('c-cmp'),{type:'bar',data:{labels:Object.keys(bk),datasets:[{data:Object.values(bk),backgroundColor:['#F04438','#F97316','#F79009','#84CC16','#22D3EE','#12B76A'],borderRadius:6}]},options:cfg({})});
   const lb=document.getElementById('lbc');
   [...CONTRIBUTORS].sort((a,b)=>b.weeks_submitted.filter(w=>WEEKS.some(ww=>ww.key===w)).length-a.weeks_submitted.filter(w=>WEEKS.some(ww=>ww.key===w)).length).forEach((c,i)=>{
-    const n=c.weeks_submitted.filter(w=>WEEKS.some(ww=>ww.key===w)).length;
+    const n=c.weeks_submitted.filter(w=>WEEKS.some(ww=>normK(ww.key)===normK(w))).length;
     const rc=i===0?'gd':i===1?'sv':i===2?'bz':'';
     const rl=i===0?'&#129351;':i===1?'&#129352;':i===2?'&#129353;':'#'+(i+1);
     const isN=c.type.includes('Track 1');
