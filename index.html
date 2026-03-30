@@ -671,6 +671,7 @@ async function tryLive() {
       throw pe;
     }
 
+    processed.rawTotal = d.total; // exact Airtable record count, no expansion
     lbl.textContent = 'Live · Airtable · ' + d.total + ' records · ' + new Date().toLocaleTimeString();
     buildAll(processed);
 
@@ -738,7 +739,7 @@ function buildAll(live) {
     const hi = document.getElementById('hero-issues');
     const hn = document.getElementById('hero-nps');
     const hc = document.getElementById('hero-contribs');
-    if(hs) hs.textContent = live.rawTotal || live.totalSubs;
+    if(hs) hs.textContent = live.rawTotal;
     if(hi) hi.textContent = live.totalIssues.toLocaleString();
     if(hn) hn.textContent = live.overallNpsAvg.toFixed(2);
     if(hc) hc.textContent = live.totalContribs;
@@ -765,7 +766,7 @@ function buildOverview(live){
   const strip=document.getElementById('kpi0');
   strip.innerHTML='';
   [{l:'Total Contributors',v:totalC,s:t1+' New · '+t2+' Returning',c:'#0090FF'},
-   {l:'Total Submissions',v:(live && live.rawTotal)||totalS,s:'11 program weeks',c:'#7C3AED'},
+   {l:'Total Submissions',v:live?live.rawTotal:totalS,s:'11 program weeks',c:'#7C3AED'},
    {l:'Issues / PRs',v:tot_i,s:'Across all 11 weeks',c:'#12B76A'},
    {l:'Avg NPS Rating',v:npsAvg,s:'Program-wide average',c:'#F79009'},
    {l:'Avg Hours / Week',v:avgH,s:'Per contributor',c:'#EC4899'},
