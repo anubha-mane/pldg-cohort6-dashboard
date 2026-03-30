@@ -406,6 +406,10 @@ const WEEKS=[
   {key:'2026-W12 (Mar 22 \u2013 Mar 28)',code:'Week 11',label:'Mar 22\u201327'},
 ];
 
+// Normalise WEEKS keys to plain hyphens — matches Airtable cellFormat=string output
+(function(){ const n=s=>s.replace(/\u2013|\u2014|\u2012|[\u2010-\u2015]/g,'-').trim(); WEEKS.forEach(w=>{w.key=n(w.key);}); })();
+
+
 
 const TC={Libp2p:'#0090FF',Storacha:'#7C3AED',Akave:'#12B76A','Fil-Oz':'#F79009',Drand:'#EC4899','Open Source Observer':'#06B6D4','Space Meridian':'#F97316',IPFS:'#34D399','Fil-B':'#A78BFA',Lighthouse:'#FCD34D','Filecoin Foundation':'#6366F1','(other)':'#94A3B8'};
 
