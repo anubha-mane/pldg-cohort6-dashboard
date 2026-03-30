@@ -318,7 +318,7 @@ footer a{color:var(--pl);text-decoration:none;}
     <div class="sh"><h2>Contributor Activity</h2><p>Active headcount, completion rates, and the full leaderboard sorted by total submissions.</p></div>
     <div class="grid g2">
       <div class="card"><div class="ct"><div class="cd"></div>Active Contributors per Week</div><div class="cw h220"><canvas id="c-act"></canvas></div></div>
-      <div class="card"><div class="ct"><div class="cd" style="background:var(--grn)"></div>Submission Completion Distribution</div><div class="cw h220"><canvas id="c-cmp"></canvas></div></div>
+      <div class="card"><div class="ct"><div class="cd" style="background:var(--grn)"></div>Contributors by Weeks Submitted</div><div class="cw h220"><canvas id="c-cmp"></canvas></div></div>
     </div>
     <div class="card"><div class="ct"><div class="cd" style="background:var(--amb)"></div>Leaderboard &mdash; Total Weeks Submitted</div><div class="lbs" id="lbc"></div></div>
   </div>
@@ -561,15 +561,26 @@ function processRecords(records) {
         name:   (r['Contributor Name']  || r.name   || '').trim(),
         github: (r['Github Username']   || r.github || '').trim(),
         type:    r['Contributor Type']  || r.type   || '',
+        typeCounts: {},
         weeks_submitted: []
       };
     }
+    // Track type frequency — use most common type to handle data entry errors
+    const t = r['Contributor Type'] || r.type || '';
+    if (t) contribMap[key].typeCounts[t] = (contribMap[key].typeCounts[t] || 0) + 1;
     // Store normalised week key so checker comparisons always work
     const normWk = s => s.replace(/–|—|‒|[‐-―]|–|—|-/g, '-').trim();
     const wk = normWk(r['Program Week'] || r.week || '');
     if (wk && !contribMap[key].weeks_submitted.includes(wk)) {
       contribMap[key].weeks_submitted.push(wk);
     }
+  });
+  // Resolve each contributor's type to the most frequently submitted value
+  Object.values(contribMap).forEach(c => {
+    if (c.typeCounts && Object.keys(c.typeCounts).length > 0) {
+      c.type = Object.entries(c.typeCounts).sort((a,b) => b[1]-a[1])[0][0];
+    }
+    delete c.typeCounts;
   });
   const contributors = Object.values(contribMap);
 
@@ -855,12 +866,29 @@ function buildContribs(live){
   const wl=WS.map(w=>w.w);
   new Chart(document.getElementById('c-act'),{type:'line',data:{labels:wl,datasets:[{data:WS.map(w=>w.c),borderColor:'#0090FF',backgroundColor:'rgba(0,144,255,.07)',fill:true,tension:.4,pointBackgroundColor:'#0090FF',pointRadius:5,borderWidth:2}]},options:cfg({})});
   const normK = s => s.replace(/\u2013|\u2014|–|—|[‐-―]/g,'-').trim();
-  const bk={'1–2':0,'3–4':0,'5–6':0,'7–8':0,'9–10':0,'11 (All)':0};
+  // Buckets ordered high → low: full attendance first, dropouts last
+  const bk={'11 (All)':0,'9–10':0,'7–8':0,'5–6':0,'3–4':0,'1–2':0};
   CONTRIBUTORS.forEach(c=>{
     const n=c.weeks_submitted.filter(w=>WEEKS.some(ww=>normK(ww.key)===normK(w))).length;
-    if(n<=2)bk['1–2']++;else if(n<=4)bk['3–4']++;else if(n<=6)bk['5–6']++;else if(n<=8)bk['7–8']++;else if(n<=10)bk['9–10']++;else bk['11 (All)']++;
+    if(n>=11)bk['11 (All)']++;
+    else if(n>=9)bk['9–10']++;
+    else if(n>=7)bk['7–8']++;
+    else if(n>=5)bk['5–6']++;
+    else if(n>=3)bk['3–4']++;
+    else bk['1–2']++;
   });
-  new Chart(document.getElementById('c-cmp'),{type:'bar',data:{labels:Object.keys(bk),datasets:[{data:Object.values(bk),backgroundColor:['#F04438','#F97316','#F79009','#84CC16','#22D3EE','#12B76A'],borderRadius:6}]},options:cfg({})});
+  new Chart(document.getElementById('c-cmp'),{type:'bar',data:{
+    labels:Object.keys(bk),
+    datasets:[{
+      data:Object.values(bk),
+      backgroundColor:['#12B76A','#22D3EE','#84CC16','#F79009','#F97316','#F04438'],
+      borderRadius:6
+    }]
+  },options:cfg({
+    plugins:{
+      tooltip:{callbacks:{label:ctx=>' '+ctx.raw+' contributors'}}
+    }
+  })});
   const lb=document.getElementById('lbc');
   [...CONTRIBUTORS].sort((a,b)=>b.weeks_submitted.filter(w=>WEEKS.some(ww=>ww.key===w)).length-a.weeks_submitted.filter(w=>WEEKS.some(ww=>ww.key===w)).length).forEach((c,i)=>{
     const n=c.weeks_submitted.filter(w=>WEEKS.some(ww=>normK(ww.key)===normK(w))).length;
